@@ -19,6 +19,14 @@ knitr::opts_chunk$set(fig.align = 'center',
                       collapse = TRUE, comment = "#>")
 ```
 
+# Introduction
+This notebook documents our initial review of DEP nutrient data, learning what
+the data contains, and figuring out how to import and recode data for our
+purposes.  The notebook does not produce any output, either graphics or tabular.
+
+Results were used to inform data analysis and interpretation, principally in the 
+"DEP_Nutrients_Preparation.Rmd" and "DEP_Nutrients_Review.Rmd" notebooks.
+
 #Load libraries
 ```{r}
 library(readxl)
@@ -31,8 +39,7 @@ load_cbep_fonts()
 theme_set(theme_cbep())
 ```
 
-# DIN Data
-## Folder References
+# Folder References
 ```{r folder_refs}
 sibfldnm <- 'Original_Data'
 parent <- dirname(getwd())
@@ -41,7 +48,7 @@ sibling <- file.path(parent,sibfldnm)
 #dir.create(file.path(getwd(), 'figures'), showWarnings = FALSE)
 ```
 
-## Load Data
+# Load Data
 ```{r}
 dep_data <- read_excel(file.path(sibling, "Curtis Bohlen 051021.xlsx"),
                        col_types = c("text", "text", "date", 
@@ -99,10 +106,9 @@ dep_data <- dep_data %>%
          irr_pct = `Irradiance (% of air in surface water)`)
 ```
 
-We have a significant problem with some entries in the Excel Table including
-data flags in the same column as the data, so we need to read many columns in as
-text and clean them up after the fact.  We may be able to simplify this a bit 
-once we understand the data structure and quality codes.
+We have a  problem with some entries in the Excel Table including data flags in
+the same column as the data, so we need to read those columns in as text and
+clean them up and segregate the data quality codes.
 
 # Review Categorical Data
 ## "Sample Types" and "QC Types"
@@ -112,32 +118,24 @@ xtabs(~ `Sample Type` + `QC Type`, data = dep_data, addNA = TRUE)
 
 ### QC TYpe
 The 'QC Type' values are rare, as expected.  According to DEP's EDD template,
-which contains a Data Element Dictionary, this flag "quality control data."
+which contains a Data Element Dictionary, this flags "quality control data."
 The value "NA" is used to indicate a normal environmental sample.  The data 
 dictionary does not provide information on the specific meaning of most codes.
 
 Reviewing the data in Excel shows 'L' samples occur paired with other samples, 
 often including annotation of "RPD". This suggests these are laboratory 
-duplicates.  WE could retain and replace with arithmetic means of the duplicate
+duplicates.  We could retain and replace with arithmetic means of the duplicate
 samples, or drop these from analysis.  Given the complexity of correctly 
 reading in data with the extraneous "RPD" annotations in the data column, it is 
-far easier to drop the laboratory duplicates.
+easier to drop the laboratory duplicates.
 
-The "D" values appear to often occur in strings of multiple observations
-collected at more or less the same time. They include nutrients.  Often they 
+The "D" values appear often to occur in strings of multiple observations
+collected at more or less the same time. They include nutrients. Often they 
 have notes associated with them that suggest handling problems or other reasons
 to mistrust analytic values.  Some have sample site codes supplemented with " -
-SUR'.  Almost all have depth = 0.2.
-
-```{r}
-dep_data %>%
-  filter(`QC Type` == 'D') %>%
-  select(- site_name, -dt, - Time, -month, -year, -hour, -`Sample Type`, 
-         - `Depth Unit`, -`QC Type`, - `Sampled By`) %>%
-  select(- c(temp:chl_a_sonde)) %>%
-  select(-c(secchi:irr_pct)) %>%
-  select(-Latitude, - Longitude)
-```
+SUR'.  Almost all have depth = 0.2.  These also appear to be some sort of 
+duplicate sample - -perhaps field duplicates. Since we do not understand their
+provenance and purpose, we will drop them as well.
 
 ### Sample Type
 The Sample Type code includes information on the sample medium.  "SW" is 
@@ -148,8 +146,7 @@ surface irradiance. Looking at the Excel file, Each 'PC' sample is paired
 with a 'SW' sample one comes paired with a data row with identical site, date,
 and time, but with irradiance in (µmol/m2/s).  Interestingly, in these 
 data, we often lack the surface (air) irradiance, so we can not regenerate these
-values from raw data).
-
+values from raw data).  For our purposes, none of these codes are useful.
 
 ## Sites and Sampled By
 ```{r}
@@ -163,7 +160,8 @@ at two sites:
 
 Those have familiar site codes from the FOCB data.  We need to check to make 
 sure we are not double counting those data.  The other samples attributed to 
-FOCB do not look like familiar sampling codes, so we will need to check GIS locations
+FOCB do not look like familiar sampling codes, so we will need to check GIS
+locations.
 
 ## Locations and Site Coding
 ```{r}
@@ -172,12 +170,16 @@ dep_data %>%
   unique() %>%
   arrange(site, site_name)
 ```
+The `site_name` (Originally "Site ID" in the DEP data) -- as is common with DEP
+data -- includes a text name for each site, along with a text code for the same
+site, separated by a dash.  The content after the dash is **nearly** replicated
+in the `site` variable.
 
-We see that site_name encompasses in a few cases multiple annotated 
-`Sample Point ID`s.  In particular, `Sample Point ID`s are sometimes decorated
-with " - SUR", " - BOT", and " - MAX", apparently for "Surface", "Bottom", and 
-"Maximum" samples respectively.  One sample location, at Royal River, has the 
-annotation "_A" instead.
+Each `site_name` encompasses (in a few cases) multiple annotated `site` values 
+("Sample Point ID" in the original data).  "Sample Point ID" values are
+sometimes decorated with " - SUR", " - BOT", and " - MAX", apparently for
+"Surface", "Bottom", and "Maximum" samples respectively.  One sample location,
+at Royal River, has the annotation "_A" instead.
 
 The "MAX" samples, restricted to FR09,  do not refer to maximum depth. They 
 are associated with what appear to be sonde casts, and include chlorophyll
@@ -194,14 +196,16 @@ Only a single other sample is reported from RROO, from September of 2015.
 ```{r}
 unique(dep_data$`Depth Unit`)
 ```
-So that data is not useful.
+So that data is not useful.  All depths are in meters.
+
 # Resolving Data With Qualifiers
 We want to look at the letter codes embedded in otherwise quantitative data.
-We use regex to extract non-numeric data and look at what we find.
-
+We use regex to extract non-numeric data and look at what we find. This may
+hide details like separation by commas, dashes and period that may appear in 
+numbers.
 ```{r}
 tmp <- dep_data %>%
-  # delete teh QA samples
+  # delete the QA samples
   filter(`QC Type` == 'NA')
   
 bad_numeric_data <- tmp %>%  
@@ -214,13 +218,11 @@ bad_numeric_data <- tmp %>%
 
 ```
 
-We use a regex to identify digits, spaces, minus signs, and decimals.  We use
-`gsub()` to replace them all with the empty string.  For some reason, this 
-also appears to pick up commas, although we don't call for that directly.
-
+We use a regex to identify digits, spaces, and decimals.  We use
+`gsub()` to replace them all with the empty string.
 ```{r}
 bad_numeric_data <- bad_numeric_data %>%
-  mutate(across(! contains('QC'), ~ gsub('[ -.[:digit:]]*', '', .x))) %>%
+  mutate(across(! contains('QC'), ~ gsub('[ .[:digit:]]*', '', .x))) %>%
   rowwise() %>%
   mutate(has_bad_data = any(! is.na(c_across(! contains('QC'))))) %>%
   filter(has_bad_data) %>%
@@ -598,15 +600,13 @@ tmp %>%
   length()
 ```
 
+# Review Irradiance Data
+The data review suggests we should pull a separate data series for the irradiance
+data, since it occurs in pairs and triplets.
 
-
-
-# Generate Irradiance Data
-This suggests we should pull out a separate data series for the irradiance
-values.
-
-A few of these data ( about 54) rows contain other data, apparently
-sonde observations.
+A few of the data reported with irradiance info (about 54 rows) contain other
+data, apparently sonde observations.  It makes sense that some of the time sonde
+data and irradiance data would be acquired simultaneously.
 ```{r}
 irr_data <- dep_data %>%
   filter(! (is.na(irr_air) & 
@@ -644,8 +644,10 @@ irr_data %>%
   summarize(any(n) > 3)
 ```
 
-So we can assemble a tibble with that assumption.  We also check if we have 
-any duplicate data, which we don't.
+So we can assemble a tibble based on the assumption that we never have more than
+the expected three rows of irradiance data.  We also checked if we have 
+any duplicate data, which we don't.  We can use `group_by()` semantics
+with `summarize()` to collapse three related rows to a single row.
 
 We focus here on the irradiance numbers only, as many of the other rows of 
 data are still in character form.

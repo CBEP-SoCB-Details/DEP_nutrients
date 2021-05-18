@@ -1,0 +1,568 @@
+---
+title: "Initial Review of Friends of Casco Bay Nutrient Data"
+author: "Curtis C. Bohlen, Casco Bay Estuary Partnership."
+date: "04/26/2021"
+output:
+  github_document:
+    toc: true
+    fig_width: 5
+    fig_height: 4
+---
+
+<img
+    src="https://www.cascobayestuary.org/wp-content/uploads/2014/04/logo_sm.jpg"
+    style="position:absolute;top:10px;right:50px;" />
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.align = 'center',
+                      fig.width = 5, fig.height = 4,
+                      collapse = TRUE, comment = "#>")
+```
+
+#Load libraries
+```{r}
+#library(readxl)
+library(tidyverse)
+
+library(GGally)
+#library(mgcv)
+
+library(CBEPgraphics)
+load_cbep_fonts()
+theme_set(theme_cbep())
+```
+
+# Load Data
+
+```{r}
+dep_data <- read_csv('dep_nutrient_data.csv',
+                     col_types = cols(
+                       .default = col_double(),
+                       site_name = col_character(),
+                       site = col_character(),
+                       depth_designation = col_character(),
+                       dt = col_date(format = ""),
+                       month = col_factor(levels = month.abb),
+                       year = col_integer(),
+                       time = col_time(format = ""),
+                       hour = col_integer(),
+                       turbidity_cens = col_logical(),
+                       chl_syn_cens = col_logical(),
+                       chl_syn_flag = col_logical(),
+                       chl_dif_flag = col_logical(),
+                       phaeo_flag = col_logical(),
+                       phaeo_cens = col_logical(),
+                       nox_n_cens = col_logical(),
+                       nox_n_flag = col_logical(),
+                       nh4_n_cens = col_logical(),
+                       nh4_n_flag = col_logical(),
+                       tn_flag = col_logical(),
+                       op_p_flag = col_logical(),
+                       tp_cens = col_logical(),
+                       tp_flag = col_logical(),
+                       tss_cens = col_logical(),
+                       tss_flag = col_logical(),
+                       secchi_on_bottom = col_logical(),
+                       `Sample Comments` = col_character(),
+                       `Validation Comments` = col_character()
+                     )) %>%
+  rename(sample_date = dt)
+```
+
+
+
+```{r}
+irr_data  <- read_csv('dep_irradiance_data.csv',
+                      col_types = cols(
+                        site_name = col_character(),
+                        site = col_character(),
+                        dt = col_date(format = ""),
+                        month = col_factor(levels = month.abb),
+                        year = col_integer(),
+                        time = col_time(format = ""),
+                        hour = col_integer(),
+                        depth = col_double(),
+                        irr_air = col_double(),
+                        irr_water = col_double(),
+                        irr_pct = col_double()
+                      )) %>%
+  rename(sample_date = dt)
+```
+
+# Summary of Metadata
+
+## QA/QC Samples
+We conducted no analysis of QA/QC samples, and simply deleted then from the data
+to avoid confusion.
+
+## Data Quality Flags and Censoring Flags
+While preparing our working data, we separated raw observations from text
+annotations, including data quality flags.  
+
+We had "J", 'J*", "B" and "JB" flags to contend with.  While the metadata we
+received from DEP did not include definitions of all flags, these are
+conventionally used to indicate that values are to be treated as "estimated
+values" because of uncertain precision, especially for values between instrument
+detection and contracted detection or quantitation limits.   Where data quality
+flags existed after deleting the QA/QC samples, we collapsed them down to a
+`TRUE` / `FALSE` flag indicating whether samples were flagged or not. These 
+flags follow a consistent naming convention, with the variable name followed by
+an underscore and "flag".
+
+We also had a few "U",  "U<" and ">" flags.  These represent censored values,
+either right censored ( ">") for Secchi depth, or left censored for other 
+parameters.  Again, we separated out a `TRUE` / `FALSE` flag to indicated 
+censored values.  These flags also follow a consistent naming convention, with 
+the variable name followed by an underscore and "cens".
+
+## Units
+Our derived data sources lack clear indication of units, which were documented
+in the source Excel files.  We summarize relevant information here.
+
+Variable Name |  Meaning                 | Units                 |  
+--------------|--------------------------|-----------------------|  
+site_name     | DEP "Site ID"            |                       |  
+site          | DEP "Sample Point ID" without depth designation |    |  
+depth_designation | DEP depth designation from "Sample Point ID" | |
+sample_date   | Date of sample collection    | yyyy-mm-dd format     |
+month     | Month, derived from date     | Three letter codes    |
+year      | Year, derived from date      |                  |    |
+time      | time of sample               | 24 hour clock, hh:mm format |
+hour      | hour, derived from time      |                       |
+depth     | Sample Depth	               | Meters                |
+temp      | Water Temperature            | DEG C                 |
+salinity  | Salinity                     | PPTH                  |
+ph        | pH                           |                       |
+pctsat    | Dissolved Oxygen Saturation  | %                     |
+do        | Dissolved Oxygen             | MG/L                  |
+turbidity | Turbidity                    | NTU                   |
+chl_a_sonde |Chlorophyll A, measured with a sonde | UG/L          |
+chl_syn   |	Chlorophyll A, combining DEP "Chlorophyll A" and "Chlorophyll A - Phaeophytin|  UG/L |
+chl_dif   | Chlorophyll A, combining DEP "Chlorophyll A" minus "Phaeophytin" and "Chlorophyll A - Phaeophytin| UG/L |
+phaeo     | Phaeophytin                   | UG/L                 |
+nox_n     | Nitrate + Nitrite As N        | MG/L                 |
+nh4_n     | Ammonia as Nitrogen           | MG/L                 |
+tn        | Total Nitrogen                | MG/L                 |
+op_p      | Orthophosphate as Phosphorus  | MG/L                 |
+tp        | Total Phosphorus as P         | MG/L                 |
+tss       | Total Suspended Solids        | MG/L                 |
+secchi    | Secchi Depth                  | M                    |
+irr_air   | Irradiance (air)              | µmol/m2/s            |
+irr_water | Irradiance (surface water)    | µmol/m2/s            |
+irr_pct_  | Irradiance (% of air in surface water) | %           |
+
+## Cross Occurrances of Data
+We are interested in figuring out what data occurs with other data.  A giant
+`xtab()` is possible, but unwieldy for more than three variables
+
+We instead reducing all VARIABLES  to the value 1 if data exists, and then looking at
+correlations between data sets.
+
+```{r}
+tmp <- dep_data %>%
+  select(depth:secchi) %>%
+  select_if(is.numeric) %>%
+  mutate(across(everything(), ~ as.numeric( ! is.na(.x))))
+cor(tmp)
+```
+
+One obvious group pf variables that are often available together are the data 
+derived from sondes, including : 
+
+*  temp  
+*  salinity
+*  ph
+*  pctsat
+*  do
+*  turbidity
+*  chl_a_sonde
+
+These are typically not found in the same data rows as the other parameters,
+perhaps because sonde data can be a downcast, and thus includes a lot of
+depth information from nearly the same date and time.
+
+Chlorophyll data is also normally reported with at least some nutrient data,
+but the mix of available nutrient data varies somewhat.
+
+Secchi depth is about as likely to be reported on rows with other data as not.
+
+# Extract Sonde Data Subset
+```{r}
+sonde_data <- dep_data %>%
+  select(site_name:chl_a_sonde) %>%
+  relocate(turbidity, turbidity_cens, .after = chl_a_sonde) %>%
+  filter(if_any(temp:turbidity, ~ ! is.na(.x)))
+```
+
+
+```{r fig.width = 7, fig.height = 7 }
+tmp <- sonde_data %>%
+  select(depth:turbidity)
+ggpairs(tmp, progress = FALSE)
+```
+
+## Delete Bad Temperature Data
+We note a series of low temperature data.  These appear to be problematic. There
+is a collection of temperature values below 1 C in spring and summer months, 
+which is unlikely. We delete those questionable temperature values. 
+
+```{r}
+sonde_data <- sonde_data %>%
+  mutate(temp = if_else(temp < 5,
+                 NA_real_, temp))
+```
+
+
+# Review of Sonde Data
+## Scatterplot Matrix (Pairs Plot)
+```{r fig.width = 7, fig.height = 7 }
+tmp <- sonde_data %>%
+  select(depth:turbidity)
+ggpairs(log(tmp), progress = FALSE)
+```
+We see expected general correlations, somewhat blunted by complexity of sampling
+histories, with multiple sites and dates.
+
+## Sites by Depths (Useless?) 
+```{r}
+tmp <- sonde_data %>%
+  mutate(dpth_clss = if_else(depth < 2, round(depth, 1), round(depth,0)))
+xtabs(~ dpth_clss + site, data = tmp)
+rm(tmp)
+```
+
+Do, most sonde data appears to be downcast data, with data collected at (or
+near) specific depths.  It looks like there has been inconsistency of handling 
+shallow water samples.
+
+## How often was each site sampled?
+We make an assumption here that sampling on one day is all related.
+```{r}
+tmp <- sonde_data %>%
+  group_by(site, sample_date) %>%
+  summarize(was_sampled = sum(! is.na(depth)) > 1,
+            .groups = 'drop')
+xt <- xtabs(~ sample_date + site, data = tmp)
+colSums(xt)
+rm(tmp, xt)
+```
+
+We see clearly that certain sites had sonde data collected much more frequently.
+Most of those are FOCB "profile" Sites, so it is likely there is some data 
+overlap with the FOCB downcast data.
+
+We can emphasize data from selected sites, which may clarify what is going on.
+WE chose first to process data from sites withat least 29 sampling dates.
+lets look at site "FR)9"
+
+```{r}
+sonde_data %>%
+  filter(site == 'FR09', year == 2018) %>%
+ggplot(aes(sample_date, depth, color = do, size = temp)) +
+  geom_point() +
+  scale_colour_gradient2(midpoint = 9, 
+                         high = scales::muted("red"), 
+                         low = scales::muted("blue")) +
+   scale_y_reverse()
+```
+
+```{r}
+sonde_data %>%
+  filter(site == 'FR09', year == 2018) %>%
+ggplot(aes(sample_date, depth, color = temp, size = do)) +
+  geom_point() +
+  scale_colour_gradient2(midpoint = 15, 
+                         high = scales::muted("red"), 
+                         low = scales::muted("blue")) +
+   scale_y_reverse()
+```
+
+
+To create a more typical depth-time plot we need to create data with equally 
+spaced (interpolated) values. 
+
+# Interpolation to regular grid
+Many of the ideas fro the following code came from the following web site:
+https://fishandwhistle.net/post/2019/depth-time-heatmaps/
+
+Our code differs because we have different programming practices and
+preferences.
+
+##Depth
+R includes an interpolation function, `approx()`.  It takes vector values
+for x and y, and  vector of desired locations(x values) for the estimates.
+
+Note that here we are predicting TEMPERATURE based on DEPTH, so the default 
+names `x` and `y` for the results of `approx()` are reversed.
+
+```{r}
+tmp <- sonde_data %>% 
+  select(site, sample_date, depth, month, year, temp) %>%
+  filter(site == 'FR09', year == 2018, month == 'Jul')
+interp <- as_tibble(approx(tmp$depth, tmp$temp, seq(0, 13, by = 0.25 )))
+interp
+```
+
+
+```{r}
+ggplot(tmp, aes(temp, depth)) +
+  geom_point() +
+  geom_point(mapping = aes(y,x), data = interp, shape = 3)
+   scale_y_reverse()
+   rm(tmp, interp)
+```
+
+So, we need a function that can interpolate from the surface (depth = 0) to
+maximum depth.  This is just a thin wrapper around `approx` that handles 
+a little housekeeping setting up the grid.
+
+```{r}
+interpol <- function(.depth, .value, .grid = NA, resolution = 0.5,
+                     name = 'interpolation') {
+  ddepth = .depth[! is.na(.depth) & ! is.na(.value)]
+  vvalue = .value[! is.na(.depth) & ! is.na(.value)]
+  max.depth = max(ddepth, na.rm = TRUE)
+  
+  # Round max depth to a whole number for interpolation
+  if ( ! abs((max.depth - round(max.depth)) < 0.001))
+    max.depth <- round(max.depth + 0.5)
+  
+  if (missing(.grid)) {
+    ggrid = seq(0, max.depth, by = resolution)
+  }
+  else {
+    ggrid = .grid
+  }
+  
+  vals <- as.tibble(approx(ddepth, vvalue, ggrid)) %>%
+    rename(depth = x, value = y) %>%
+    mutate(id = name) %>%
+    relocate(id)
+  return(vals)
+}
+  
+  
+tmp <- sonde_data %>% 
+  select(site, sample_date, depth, month, year, temp) %>%
+  filter(site == 'FR09', year == 2018, month == 'Jul')
+interp <- interpol(tmp$depth, tmp$temp)
+interp
+
+```
+
+Now, we need to walk a season's worth of data to create a regular grid. Ideally, 
+we want a function that can take a data series within a site, 
+and spit out the grid.  First, we run the above function for all 
+
+It is convenient to pass a data parameter here, so this can be 
+integrated into a tidyverse workflow, but it requires use of much more complex
+code.  Specifically, it allows us to pass column names unquoted.
+
+```{r}
+all_dates_interp <- function(.dt, .thedate, .depth, .value,
+                             name = '', resolution = 0.5) {
+  
+  # These are ugly argument checks, since they don't provide nice error messages.
+  stopifnot(is.data.frame(.dt))
+  stopifnot(length(resolution) == 1)
+  
+ # browser()
+
+  
+  
+  ddate  <- as.character(ensym(.thedate))
+  ddepth <- as.character(ensym(.depth))
+  vvalue <- as.character(ensym(.value))
+  
+  # ddate  <-  rlang::as_name(.thedate)
+  # ddepth <-  rlang::as_name(.depth)
+  # vvalue <-  rlang::as_name(.value)
+  
+  # Check that these are data names from the data frame
+  
+  stopifnot(ddate %in% names(.dt))
+  stopifnot(ddepth %in% names(.dt))  
+  stopifnot(vvalue %in% names(.dt))  
+
+  
+  # Create internal dataframe
+  # This is very wasteful of memory for large data sets
+  # but simplifies coding somewhat
+  # Note we make a "long" format dataframe here.
+  df <- tibble(the_date = .dt[[ddate]], 
+               dpth = .dt[[ddepth]],
+               val = .dt[[vvalue]])
+  
+  # establish the same grid for all dates, despite tides, etc.
+  
+  max_dpth <- max(df$dpth)
+  # Round max depth up to a whole number for interpolation
+  max_dpth <- if_else( (abs(max_dpth - round(max_dpth)) < 0.001),
+                      max_dpth, 
+                      round(max_dpth + 0.5))
+  
+  grid = seq(0, max_dpth, resolution)
+  
+  # now, we work through each date.  This returns a dataframe for each date.
+  res <- df %>%
+    group_by(the_date) %>%
+    nest() %>%
+    mutate(res = map(data, function(dat) interpol(dat$dpth, dat$val,
+                                                  .grid = grid,
+                                                  name = first(the_date))))
+  r = reduce(res$res, bind_rows)
+  return(r)
+}
+```
+
+```{r}
+tmp <- sonde_data %>% 
+  select(site, sample_date, depth, month, year, temp) %>%
+  filter(site == 'FR09', year == 2018)
+
+test <- all_dates_interp(tmp, sample_date, depth, temp, resolution = 0.5)
+```
+
+
+```{r}
+ggplot(test, aes(id, depth, color = value)) +
+  geom_point(size = 3) +
+  scale_y_reverse() +
+   scale_colour_gradient2(midpoint = 15, 
+                         high = scales::muted("red"), 
+                         low = scales::muted("blue"), na.value = 'white')
+```
+
+Great. now we need to interpolate the other way....
+
+### Dates
+We can use essentially the same logic to interpolate by dates.
+
+We assume this function is being passed a dataframe with three items:
+dates, depths and values.  It will return a (larger) dataframe that fills in
+values between observations.
+
+### Utility Function
+WE break out a fnction to generate a tibble for one depth
+```{r}
+interpol_dates <- function(.dts, .value, .grid = NA, resolution = 1,
+                     .id = '') {
+  #browser()
+  ddate = .dts[! is.na(.dts) & ! is.na(.value)]
+  vvalue = .value[! is.na(.dts) & ! is.na(.value)]
+  
+  
+  if (sum(! is.na(vvalue)) > 1) {   # We have some actual data....
+    # Establish the grid
+    first = min(ddate)
+    last =  max(ddate)
+    if (missing(.grid)) {
+      ggrid = seq(first, last, by = resolution)
+    }
+    else {
+      ggrid = .grid
+    }
+    vals <- as.tibble(approx(ddate, vvalue, ggrid)) %>%
+      rename(i_date = x, value = y) %>%
+      mutate(id = .id) %>%
+      relocate(id) }
+  else {
+    vals <- tibble(i_date = sort(unique(.dts)), value = NA_real_) %>%
+      mutate(id = .id) %>%
+      relocate(id) }
+  return(vals)
+}
+```
+
+
+```{r}
+tmp <- test %>% 
+  filter(depth == 0)
+interp <- interpol_dates(tmp$id, tmp$value, .id = tmp$depth)
+interp
+```
+
+
+
+
+```{r}
+all_dates_fill <- function(.dt, .thedate, .depth, .value, resolution = 1) {
+  
+  # These are ugly argument checks, since they don't provide nice error messages.
+  stopifnot(is.data.frame(.dt))
+  stopifnot(length(resolution) == 1)
+  
+  ddate  <- as.character(ensym(.thedate))
+  ddepth <- as.character(ensym(.depth))
+  vvalue <- as.character(ensym(.value))
+  
+  # Check that these are data names from the data frame
+  stopifnot(ddate %in% names(.dt))
+  stopifnot(ddepth %in% names(.dt))  
+  stopifnot(vvalue %in% names(.dt))  
+  browser()
+  # Create internal dataframe
+  # This is  wasteful of memory for large data sets but simplifies coding
+  df <- tibble(the_date = .dt[[ddate]], 
+               dpth = .dt[[ddepth]],
+               val = .dt[[vvalue]])
+  
+   l <- length(unique(df$the_date)) 
+   
+  # now, we work through each depth  This returns a dataframe for each date.
+  dff <- df %>%
+    group_by(dpth) %>%
+    nest()
+  res <- dff %>%
+    mutate(res = map(data, function(dat)
+                           interpol_dates(dat$the_date, 
+                                          dat$val, resolution = 1,
+                                          .id = dat$dpth)))
+  
+   rr <-  reduce(res$res, bind_rows)
+  return(rr)
+}
+```
+
+
+```{r}
+tt <- all_dates_fill(test, id, depth, value, resolution = 5 )[['res']]
+```
+
+So, it appears the problem is in teh map step, where map 
+
+
+
+```{r}
+dff <- test %>%
+  filter(depth == 1)
+resolution = 0.5
+
+grid = seq(0,15, by = 0.5)
+
+  first = min(dff$id)
+  last =  max(dff$id)
+
+test_fun <- function(dat) {
+    if (sum(! is.na(dat$value)) > 1) {
+    #  r <-   rep(10, length(grid))
+      
+      r <- approx(dat$id,
+                  dat$value,
+                  seq(first, last, resolution))
+    }
+    else {
+      r <-   rep(NA_real_, length(grid))
+    }
+           
+              
+  return(r)
+}
+
+dff$value
+  
+test_fun(dff)
+```
+
+
+

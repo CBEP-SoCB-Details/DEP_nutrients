@@ -28,6 +28,9 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
         -   [Orthophosphate](#orthophosphate)
         -   [Total Phosphorus](#total-phosphorus)
         -   [TSS](#tss)
+-   [Extract Geographic Locations](#extract-geographic-locations)
+-   [Extract Sonde Data](#extract-sonde-data)
+    -   [Delete Bad Temperature Data](#delete-bad-temperature-data)
 -   [Output Revised Data](#output-revised-data)
 
 <img
@@ -141,10 +144,10 @@ latitude and longitude as “RR00”.
 
 ``` r
 dep_data <- dep_data %>%
-  mutate(depth_designation = if_else(grepl('-', site),
+    mutate(depth_designation = if_else(grepl(' - ', site),
                                      substr(site, nchar(site) - 3, nchar(site)),
                                      NA_character_),
-         site = if_else(grepl('-', site),
+         site = if_else(grepl(' - ', site),
                           substr(site, 1, nchar(site) - 5),
                           site)) %>%
   relocate(depth_designation, .after = site)
@@ -153,7 +156,7 @@ dep_data <- dep_data %>%
 ``` r
 dep_data %>%
   filter(! is.na(depth_designation))
-#> # A tibble: 3,750 x 40
+#> # A tibble: 277 x 40
 #>    site_name      site  depth_designati~ Date                Time               
 #>    <chr>          <chr> <chr>            <dttm>              <dttm>             
 #>  1 BANDM RAILROA~ "BMR~ " SUR"           2018-05-10 00:00:00 1899-12-31 12:42:00
@@ -166,7 +169,7 @@ dep_data %>%
 #>  8 BANDM RAILROA~ "BMR~ " SUR"           2018-08-30 00:00:00 1899-12-31 12:18:00
 #>  9 BANDM RAILROA~ "BMR~ " SUR"           2018-09-20 00:00:00 1899-12-31 12:45:00
 #> 10 BANDM RAILROA~ "BMR~ " SUR"           2018-09-20 00:00:00 1899-12-31 12:45:00
-#> # ... with 3,740 more rows, and 35 more variables: dt <date>, month <fct>,
+#> # ... with 267 more rows, and 35 more variables: dt <date>, month <fct>,
 #> #   year <dbl>, time <chr>, hour <dbl>, Sample Type <chr>, QC Type <chr>,
 #> #   Sampled By <chr>, depth <dbl>, Depth Unit <chr>, temp <dbl>,
 #> #   salinity <chr>, ph <dbl>, pctsat <chr>, do <chr>, turbidity <chr>,
@@ -514,9 +517,61 @@ dep_data <- dep_data %>%
 #> of {fmt_args(~condition)}")): NAs introduced by coercion
 ```
 
+# Extract Geographic Locations
+
+``` r
+geographic_data <- dep_data %>%
+  select(site, site_name, Latitude, Longitude) %>%
+  mutate(short_name = sub( '- CR-', '', site_name)) %>%
+  mutate(short_name = sub( '- CR', '', short_name)) %>%
+  mutate(short_name = sub( '- PR-', '', short_name)) %>%
+  mutate(short_name = sub( '- PR', '', short_name)) %>%
+  mutate(short_name = sub( '- RR-', '', short_name)) %>%
+  mutate(short_name = sub( '- RR', '', short_name)) %>%
+  mutate(short_name = sub( '- AC0', '', short_name)) %>%
+  mutate(short_name = sub( '- CR', '', short_name)) %>%
+  mutate(short_name = sub( '- FR0', '', short_name)) %>%
+  mutate(short_name = sub( '- HR0', '', short_name)) %>%
+  mutate(short_name = sub( '- LC0', '', short_name)) %>%
+  mutate(short_name = sub(' -.*$', '', short_name)) %>%
+  mutate(short_name = sub(' V70', '', short_name)) %>%
+  
+  relocate(short_name, .after = site_name) %>%
+  unique()
+```
+
+# Extract Sonde Data
+
+Ww also extract a subset of the data derived from sondes for independent
+review, but as we dis not delete those data from the full data set, the
+two datasets are now not independent of each other
+
+``` r
+sonde_data <- dep_data %>%
+  select(site_name:chl_a_sonde) %>%
+  relocate(turbidity, turbidity_cens, .after = chl_a_sonde) %>%
+  filter(if_any(temp:turbidity, ~ ! is.na(.x)))
+```
+
+## Delete Bad Temperature Data
+
+We note a series of low temperature data. These appear to be
+problematic. There is a collection of temperature values below 1 C in
+spring and summer months, which is unlikely. We delete those
+questionable temperature values.
+
+``` r
+sonde_data <- sonde_data %>%
+  mutate(temp = if_else(temp < 5,
+                 NA_real_, temp)) %>%
+  select(-depth_designation)
+```
+
 # Output Revised Data
 
 ``` r
 write_csv(dep_data, 'dep_nutrient_data.csv', na = '')
 write_csv(irr_data, 'dep_irradiance_data.csv')
+write_csv(sonde_data, 'dep_sonde_data.csv')
+write_csv(geographic_data, 'dep_locations.csv')
 ```

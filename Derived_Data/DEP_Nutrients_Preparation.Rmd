@@ -99,7 +99,6 @@ dep_data <- dep_data %>%
          irr_pct = `Irradiance (% of air in surface water)`)
 ```
 
-
 # Split Site Code and Depth Code
 A number of entries under `site` are composites, with a site code followed by
 " - SUR", " - BOT", or " - MAX".  We split those off here.  We chose to retain
@@ -107,21 +106,19 @@ A number of entries under `site` are composites, with a site code followed by
 separate designation, despite the same nominal latitude and longitude as "RR00".
 ```{r}
 dep_data <- dep_data %>%
-  mutate(depth_designation = if_else(grepl('-', site),
+    mutate(depth_designation = if_else(grepl(' - ', site),
                                      substr(site, nchar(site) - 3, nchar(site)),
                                      NA_character_),
-         site = if_else(grepl('-', site),
+         site = if_else(grepl(' - ', site),
                           substr(site, 1, nchar(site) - 5),
                           site)) %>%
   relocate(depth_designation, .after = site)
 ```
 
-
 ```{r}
 dep_data %>%
   filter(! is.na(depth_designation))
 ```
-
 
 # Generate Irradiance Data
 We pull out a separate data tibble for the irradiance data, principally so we 
@@ -149,13 +146,11 @@ irr_data <- dep_data %>%
   relocate(site_name)
 ```
 
-
 # Remove Irradiance Data
 ```{r}
 dep_data <- dep_data %>%
   select(-contains('irr_'))
 ```
-
 
 # Remove Rows with No Data
 Many data rows only contained data for irradiance.  We drop them now.  The
@@ -179,7 +174,6 @@ We have a significant problem with some entries in the Excel Table including
 data flags in the same column as the data, so we need to read many columns in as
 text and clean them up after the fact.  We may be able to simplify this a bit 
 once we understand the data structure and quality codes.
-
 
 ## Address Censoring and Data Quality Flags
 We see several common data qualifier codes:
@@ -398,10 +392,57 @@ dep_data <- dep_data %>%
   relocate(secchi_on_bottom, .after = secchi)
 ```
 
+# Extract Geographic Locations
+```{r}
+geographic_data <- dep_data %>%
+  select(site, site_name, Latitude, Longitude) %>%
+  mutate(short_name = sub( '- CR-', '', site_name)) %>%
+  mutate(short_name = sub( '- CR', '', short_name)) %>%
+  mutate(short_name = sub( '- PR-', '', short_name)) %>%
+  mutate(short_name = sub( '- PR', '', short_name)) %>%
+  mutate(short_name = sub( '- RR-', '', short_name)) %>%
+  mutate(short_name = sub( '- RR', '', short_name)) %>%
+  mutate(short_name = sub( '- AC0', '', short_name)) %>%
+  mutate(short_name = sub( '- CR', '', short_name)) %>%
+  mutate(short_name = sub( '- FR0', '', short_name)) %>%
+  mutate(short_name = sub( '- HR0', '', short_name)) %>%
+  mutate(short_name = sub( '- LC0', '', short_name)) %>%
+  mutate(short_name = sub(' -.*$', '', short_name)) %>%
+  mutate(short_name = sub(' V70', '', short_name)) %>%
+  
+  relocate(short_name, .after = site_name) %>%
+  unique()
+```
+
+# Extract Sonde Data
+Ww also extract a subset of the data derived from sondes for independent review,
+but as we dis not delete those data from the full data set, the two datasets 
+are now not independent of each other
+```{r}
+sonde_data <- dep_data %>%
+  select(site_name:chl_a_sonde) %>%
+  relocate(turbidity, turbidity_cens, .after = chl_a_sonde) %>%
+  filter(if_any(temp:turbidity, ~ ! is.na(.x)))
+```
+
+## Delete Bad Temperature Data
+We note a series of low temperature data.  These appear to be problematic. There
+is a collection of temperature values below 1 C in spring and summer months, 
+which is unlikely. We delete those questionable temperature values. 
+
+```{r}
+sonde_data <- sonde_data %>%
+  mutate(temp = if_else(temp < 5,
+                 NA_real_, temp)) %>%
+  select(-depth_designation)
+```
+
 # Output Revised Data
 ```{r}
 write_csv(dep_data, 'dep_nutrient_data.csv', na = '')
 write_csv(irr_data, 'dep_irradiance_data.csv')
+write_csv(sonde_data, 'dep_sonde_data.csv')
+write_csv(geographic_data, 'dep_locations.csv')
 ```
 
 
