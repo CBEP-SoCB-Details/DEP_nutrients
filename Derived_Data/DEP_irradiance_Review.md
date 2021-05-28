@@ -18,6 +18,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 -   [Mean K by Site](#mean-k-by-site)
 -   [“Adjusted” Mean K by Site](#adjusted-mean-k-by-site)
 -   [Compare Results](#compare-results)
+-   [Further Work](#further-work)
 
 <img
     src="https://www.cascobayestuary.org/wp-content/uploads/2014/04/logo_sm.jpg"
@@ -68,10 +69,9 @@ library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
 #> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.1     v dplyr   1.0.5
+#> v tibble  3.1.2     v dplyr   1.0.6
 #> v tidyr   1.1.3     v stringr 1.4.0
 #> v readr   1.4.0     v forcats 0.5.1
-#> Warning: package 'tibble' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -646,6 +646,8 @@ raw means.
 errors from the complex model a bit larger than the estimates standard
 error of the means. 4. We **still** have some evidence for a remaining
 location-scale relationship.
+
+# Further Work
 
 We don’t yet have a purpose for more complex models or more complex
 graphics. We await evaluation of other data before continuing.

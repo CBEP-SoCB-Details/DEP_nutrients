@@ -3,16 +3,17 @@ Initial Review of Friends of Casco Bay Nutrient Data
 Curtis C. Bohlen, Casco Bay Estuary Partnership.
 04/26/2021
 
+-   [Load libraries](#load-libraries)
 -   [DIN Data](#din-data)
     -   [Folder References](#folder-references)
     -   [Load Data](#load-data)
 -   [Simplify Names](#simplify-names)
 -   [Split Site Code and Depth Code](#split-site-code-and-depth-code)
+-   [Delete Data QC Samples](#delete-data-qc-samples)
 -   [Generate Irradiance Data](#generate-irradiance-data)
--   [Remove Irradiance Data](#remove-irradiance-data)
--   [Remove Rows with No Data](#remove-rows-with-no-data)
-    -   [Delete Data QC Samples](#delete-data-qc-samples)
--   [Clean UP Quantitative Data](#clean-up-quantitative-data)
+    -   [Remove Irradiance Data](#remove-irradiance-data)
+    -   [Remove Rows with No Data](#remove-rows-with-no-data)
+-   [Clean Up Quantitative Data](#clean-up-quantitative-data)
     -   [Address Censoring and Data Quality
         Flags](#address-censoring-and-data-quality-flags)
         -   [Salinity and Oxygen](#salinity-and-oxygen)
@@ -31,13 +32,18 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 -   [Extract Geographic Locations](#extract-geographic-locations)
 -   [Extract Sonde Data](#extract-sonde-data)
     -   [Delete Bad Temperature Data](#delete-bad-temperature-data)
+    -   [Remove Sonde Data from Core
+        Data](#remove-sonde-data-from-core-data)
+-   [Extract Secchi Data](#extract-secchi-data)
+    -   [Remove Rows Without Data From Core
+        Data](#remove-rows-without-data-from-core-data)
 -   [Output Revised Data](#output-revised-data)
 
 <img
     src="https://www.cascobayestuary.org/wp-content/uploads/2014/04/logo_sm.jpg"
     style="position:absolute;top:10px;right:50px;" />
 
-\#Load libraries
+# Load libraries
 
 ``` r
 library(readxl)
@@ -45,10 +51,9 @@ library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
 #> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.1     v dplyr   1.0.5
+#> v tibble  3.1.2     v dplyr   1.0.6
 #> v tidyr   1.1.3     v stringr 1.4.0
 #> v readr   1.4.0     v forcats 0.5.1
-#> Warning: package 'tibble' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -180,6 +185,16 @@ dep_data %>%
 #> #   Longitude <dbl>
 ```
 
+# Delete Data QC Samples
+
+``` r
+dep_data_2 <- dep_data %>%
+  select(-`Sampled By`, -`Depth Unit`) %>%
+  # delete the QC samples
+  filter(`QC Type` == 'NA') %>%
+  select(-`Sample Type`, -`QC Type`)
+```
+
 # Generate Irradiance Data
 
 We pull out a separate data tibble for the irradiance data, principally
@@ -189,11 +204,11 @@ A few of these data (about 54) rows contain other data, apparently sonde
 observations.
 
 ``` r
-irr_data <- dep_data %>%
+irr_data <- dep_data_2 %>%
   filter(! (is.na(irr_air) & 
               is.na(irr_water) & 
               is.na(irr_pct))) %>%
-  select(c(site_name:hour), `QC Type`, depth, 
+  select(c(site_name:hour), depth, 
          c(temp:chl_a_sonde),
          c(irr_air:`Sample Comments`)
          ) %>%
@@ -208,34 +223,25 @@ irr_data <- dep_data %>%
   relocate(site_name)
 ```
 
-# Remove Irradiance Data
+## Remove Irradiance Data
 
 ``` r
-dep_data <- dep_data %>%
-  select(-contains('irr_'))
+dep_data_3 <- dep_data_2 %>%
+  select(-contains('irr_')) %>%
+  select(-Date, -Time)
 ```
 
-# Remove Rows with No Data
+## Remove Rows with No Data
 
 Many data rows only contained data for irradiance. We drop them now. The
 method here
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_3 <- dep_data_3 %>%
   filter(if_any(temp:secchi, ~ ! is.na(.x)))
 ```
 
-## Delete Data QC Samples
-
-``` r
-dep_data <- dep_data %>%
-  select(-`Sampled By`, -`Depth Unit`) %>%
-  # delete the QC samples
-  filter(`QC Type` == 'NA') %>%
-  select(-`Sample Type`, -`QC Type`, -Date, -Time)
-```
-
-# Clean UP Quantitative Data
+# Clean Up Quantitative Data
 
 We have a significant problem with some entries in the Excel Table
 including data flags in the same column as the data, so we need to read
@@ -275,7 +281,7 @@ handling, but that will be addressed during later analysis.
 data were removed) and can be converted directly to numeric values.
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_3 %>%
   mutate(across(c(salinity, pctsat, do), as.numeric))
 #> Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
 
@@ -291,7 +297,7 @@ powers of ten in scientific notation, and are correctly interpreted by
 `as.numeric()`.
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   mutate(turbidity_cens = grepl('U', turbidity),
          turbidity = if_else(turbidity_cens, 
                              as.numeric(substr(turbidity, 3, nchar(turbidity))),
@@ -309,7 +315,7 @@ As we explored these data, we learned that all of the data are flagged.
 As a result, we simply extract numeric values, skipping the text values.
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   mutate(chl_a_sonde = as.numeric(substr(chl_a_sonde, 
                                            3, 
                                            nchar(chl_a_sonde))))
@@ -323,66 +329,42 @@ Either one can and does occur in a pair with `phaeo` data (code not
 shown). It is not clear whether these two columns represent different
 quantities, or only alternate labeling in the EGAD data source.
 
-There are two likely possibilities: 1. They are the same thing 2. The
-first is a sum of chlA and phaeophyton, the second only Chl a.
+EPA’s Method 445.0 separates “corrected” and “uncorrected” chlorophyll.
+The relations between the two are not linear, as the correction occurs
+in the realm of florescence, not concentration.
 
-We treat them as identical, and merge them.
-
-We need to deal with both flags and left censored values, which differ
-depending on source column
+We have much more data in `chl_less_phaeo`. Since there is no easy
+interrelationship between the two chlorophyll measures, we drop the \~
+17 samples where simple `chla` was reported.
 
 ``` r
-dep_data <- dep_data %>%
-  mutate(chl_a_flag = grepl('J', chl_a),
-         chl_a_cens = grepl('U', chl_a),
-         chl_a = if_else(chl_a_flag | chl_a_cens,
-                           as.numeric(substr(chl_a, 3, nchar(chl_a))), 
-                           as.numeric(chl_a)))  %>%
+dep_data_4 <- dep_data_4 %>%
+  select(-chl_a) %>%
   
-  mutate(chl_less_phaeo_flag = grepl('J', chl_less_phaeo),
-         chl_less_phaeo_cens = grepl('U', chl_less_phaeo),
-         chl_less_phaeo = if_else(chl_less_phaeo_flag | chl_less_phaeo_cens,
+  mutate(chl_flag = grepl('J', chl_less_phaeo),
+         chl_cens = grepl('U', chl_less_phaeo),
+         chl      = if_else(chl_flag | chl_cens,
                                     as.numeric(substr(chl_less_phaeo, 3, nchar(chl_less_phaeo))), 
                                     as.numeric(chl_less_phaeo)))  %>%
   
-  mutate(chl_syn = if_else(is.na(chl_less_phaeo), 
-                           chl_a,
-                           chl_less_phaeo),
-         chl_syn_flag = if_else(is.na(chl_less_phaeo), 
-                                chl_a_flag ,
-                                chl_less_phaeo_flag),
-         chl_syn_cens= if_else(is.na(chl_less_phaeo), 
-                               chl_a_cens ,
-                               chl_less_phaeo_cens)) %>%
-  relocate(chl_syn, chl_syn_cens, chl_syn_flag, .after = chl_a_sonde ) %>%
-  select(-chl_a_cens, -chl_a_flag, 
-         -chl_less_phaeo_flag, -chl_less_phaeo_cens)
-#> Warning in replace_with(out, !condition, false, fmt_args(~false), glue("length
-#> of {fmt_args(~condition)}")): NAs introduced by coercion
-
+  relocate(chl, chl_cens, chl_flag, .after = chl_a_sonde) %>%
+  select(-chl_less_phaeo)
 #> Warning in replace_with(out, !condition, false, fmt_args(~false), glue("length
 #> of {fmt_args(~condition)}")): NAs introduced by coercion
 ```
 
 ### Phaeophyton
 
-we also calculate the alternative interpretation of the
+We also calculate the alternative interpretation of the
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   mutate(phaeo_flag = grepl('J', phaeo),
          phaeo_cens = grepl('U', phaeo),
          phaeo = if_else(phaeo_flag | phaeo_cens,
                            as.numeric(substr(phaeo, 3, nchar(phaeo))), 
                            as.numeric(phaeo)))  %>%
-  relocate(phaeo_flag, phaeo_cens, .after = phaeo) %>%
-
-  mutate(chl_dif_flag= is.na(chl_less_phaeo),
-         chl_dif = if_else(chl_dif_flag, 
-                           chl_a - phaeo,
-                           chl_less_phaeo)) %>%
-  select(- chl_a, - chl_less_phaeo) %>%
-  relocate(chl_dif, chl_dif_flag, .before = phaeo)
+  relocate(phaeo_flag, phaeo_cens, .after = phaeo)
 #> Warning in replace_with(out, !condition, false, fmt_args(~false), glue("length
 #> of {fmt_args(~condition)}")): NAs introduced by coercion
 ```
@@ -390,7 +372,7 @@ dep_data <- dep_data %>%
 ### Nitrate
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   mutate(nox_n_j_flag = grepl('J', nox_n) & (! grepl('B', nox_n)),
          nox_n_jb_flag = grepl('JB', nox_n),
          nox_n_cens = grepl('U', nox_n),
@@ -411,7 +393,7 @@ dep_data <- dep_data %>%
 ### Ammonium
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   mutate(nh4_n_flag = grepl('J', nh4_n) | grepl('B', nh4_n),
          nh4_n_cens = grepl('U', nh4_n),
          nh4_n = if_else(nh4_n_flag | nh4_n_cens,
@@ -427,7 +409,7 @@ dep_data <- dep_data %>%
 Data is too sparse to be useful, so we delete it.
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   select(-tkn)
 ```
 
@@ -436,7 +418,7 @@ dep_data <- dep_data %>%
 No TN values are non-detects, but about one in eight are flagged.
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   mutate(tn_flag = grepl('J', tn),
          tn = if_else(tn_flag,
                            as.numeric(substr(tn, 3, nchar(tn))),
@@ -449,7 +431,7 @@ dep_data <- dep_data %>%
 ### Orthophosphate
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   
   mutate(op_p_jb_flag = grepl('JB', op_p),
          op_p_star_flag = grepl('\\*', op_p),
@@ -473,7 +455,7 @@ dep_data <- dep_data %>%
 ### Total Phosphorus
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   mutate(tp_b_flag = grepl('B', tp),
          tp_cens = grepl('U', tp),
          tp_j_flag = grepl('J', tp),
@@ -490,7 +472,7 @@ relocate(tp_cens,  tp_flag, .after = tp )
 ### TSS
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
     mutate(tss_cens = grepl('U', tss),
          tss_flag = grepl('J', tss),
          tss = if_else(tss_flag | tss_cens,
@@ -506,7 +488,7 @@ dep_data <- dep_data %>%
 \#\#\#Secchi Depths
 
 ``` r
-dep_data <- dep_data %>%
+dep_data_4 <- dep_data_4 %>%
   
   mutate(secchi_on_bottom = grepl('>', secchi),
          secchi = if_else(secchi_on_bottom,
@@ -520,7 +502,7 @@ dep_data <- dep_data %>%
 # Extract Geographic Locations
 
 ``` r
-geographic_data <- dep_data %>%
+geographic_data <- dep_data_4 %>%
   select(site, site_name, Latitude, Longitude) %>%
   mutate(short_name = sub( '- CR-', '', site_name)) %>%
   mutate(short_name = sub( '- CR', '', short_name)) %>%
@@ -542,12 +524,12 @@ geographic_data <- dep_data %>%
 
 # Extract Sonde Data
 
-Ww also extract a subset of the data derived from sondes for independent
+We also extract a subset of the data derived from sondes for independent
 review, but as we dis not delete those data from the full data set, the
-two datasets are now not independent of each other
+two data sets are now not independent of each other
 
 ``` r
-sonde_data <- dep_data %>%
+sonde_data <- dep_data_4 %>%
   select(site_name:chl_a_sonde) %>%
   relocate(turbidity, turbidity_cens, .after = chl_a_sonde) %>%
   filter(if_any(temp:turbidity, ~ ! is.na(.x)))
@@ -567,11 +549,56 @@ sonde_data <- sonde_data %>%
   select(-depth_designation)
 ```
 
+## Remove Sonde Data from Core Data
+
+We have only a handful of observations of temperature, salinity, etc.
+that are not part of a complete sonde data record. So we will analyze
+these data nearly completely when we evaluate the sonde data.
+
+``` r
+dep_data_5 <- dep_data_4 %>%
+  select(-c(temp:chl_a_sonde))
+```
+
+# Extract Secchi Data
+
+``` r
+secchi_data <- dep_data_5 %>%
+filter(! is.na(secchi)) %>%
+  select(site_name:hour, secchi:`Validation Comments`) %>%
+  select(-depth_designation)
+```
+
+## Remove Rows Without Data From Core Data
+
+Since we deleted most of the data collected at depth (Secchi,
+irradiance, sonde) we now have many empty rows. We need to remove them
+from the final data.
+
+First, we create a flag to identify rows that contain any numerical
+data. Then we use that to extract data that contains real data for any
+of our core parameters of interest.
+
+(We split the two steps to avoid retaining spurious “data” where we have
+data quality of censoring flags, but no data other than that.)
+
+``` r
+grab_these <- dep_data_5 %>%
+  select(site, dt, where(is.numeric)) %>%
+  mutate(grab = if_any(chl:tss, ~ ! is.na(.x))) %>%
+  pull(grab)
+
+dep_data_6 <- dep_data_5 %>%
+  select(-secchi, -secchi_on_bottom) %>%
+  filter(grab_these)
+```
+
 # Output Revised Data
 
 ``` r
-write_csv(dep_data, 'dep_nutrient_data.csv', na = '')
+write_csv(dep_data_6, 'dep_nutrient_data.csv', na = '')
 write_csv(irr_data, 'dep_irradiance_data.csv')
 write_csv(sonde_data, 'dep_sonde_data.csv')
+write_csv(secchi_data, 'dep_secchi_data.csv')
 write_csv(geographic_data, 'dep_locations.csv')
 ```

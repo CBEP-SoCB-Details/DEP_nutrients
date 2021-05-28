@@ -19,6 +19,12 @@ knitr::opts_chunk$set(fig.align = 'center',
                       collapse = TRUE, comment = "#>")
 ```
 
+
+# Introduction
+This R Notebook focuses on continued review of contents of the DEP nutrient 
+data.  We focus here on data on concentration of nitrogen species, and examine 
+the spatial and temporal distribution of data.
+
 #Load libraries
 ```{r}
 #library(readxl)
@@ -27,70 +33,44 @@ library(tidyverse)
 library(GGally)
 #library(mgcv)
 
+library(Ternary) # Base graphics ternary plots
+
+
 library(CBEPgraphics)
 load_cbep_fonts()
 theme_set(theme_cbep())
 ```
 
 # Load Data
-
 ```{r}
 dep_data <- read_csv('dep_nutrient_data.csv',
                      col_types = cols(
-                       .default = col_double(),
+                       .default = col_logical(),
                        site_name = col_character(),
                        site = col_character(),
                        depth_designation = col_character(),
                        dt = col_date(format = ""),
-                       month = col_factor(levels = month.abb),
-                       year = col_integer(),
+                       month = col_character(),
+                       year = col_double(),
                        time = col_time(format = ""),
-                       hour = col_integer(),
-                       turbidity_cens = col_logical(),
-                       chl_syn_cens = col_logical(),
-                       chl_syn_flag = col_logical(),
-                       chl_dif_flag = col_logical(),
-                       phaeo_flag = col_logical(),
-                       phaeo_cens = col_logical(),
-                       nox_n_cens = col_logical(),
-                       nox_n_flag = col_logical(),
-                       nh4_n_cens = col_logical(),
-                       nh4_n_flag = col_logical(),
-                       tn_flag = col_logical(),
-                       op_p_flag = col_logical(),
-                       tp_cens = col_logical(),
-                       tp_flag = col_logical(),
-                       tss_cens = col_logical(),
-                       tss_flag = col_logical(),
-                       secchi_on_bottom = col_logical(),
+                       hour = col_double(),
+                       depth = col_double(),
+                       chl = col_double(),
+                       phaeo = col_double(),
+                       nox_n = col_double(),
+                       nh4_n = col_double(),
+                       tn = col_double(),
+                       op_p = col_double(),
+                       tp = col_double(),
+                       tss = col_double(),
                        `Sample Comments` = col_character(),
-                       `Validation Comments` = col_character()
-                     )) %>%
-  rename(sample_date = dt)
-```
-
-
-
-```{r}
-irr_data  <- read_csv('dep_irradiance_data.csv',
-                      col_types = cols(
-                        site_name = col_character(),
-                        site = col_character(),
-                        dt = col_date(format = ""),
-                        month = col_factor(levels = month.abb),
-                        year = col_integer(),
-                        time = col_time(format = ""),
-                        hour = col_integer(),
-                        depth = col_double(),
-                        irr_air = col_double(),
-                        irr_water = col_double(),
-                        irr_pct = col_double()
-                      )) %>%
+                       `Validation Comments` = col_character(),
+                       Latitude = col_skip(),
+                       Longitude = col_skip())) %>%
   rename(sample_date = dt)
 ```
 
 # Summary of Metadata
-
 ## QA/QC Samples
 We conducted no analysis of QA/QC samples, and simply deleted then from the data
 to avoid confusion.
@@ -130,15 +110,7 @@ year      | Year, derived from date      |                  |    |
 time      | time of sample               | 24 hour clock, hh:mm format |
 hour      | hour, derived from time      |                       |
 depth     | Sample Depth	               | Meters                |
-temp      | Water Temperature            | DEG C                 |
-salinity  | Salinity                     | PPTH                  |
-ph        | pH                           |                       |
-pctsat    | Dissolved Oxygen Saturation  | %                     |
-do        | Dissolved Oxygen             | MG/L                  |
-turbidity | Turbidity                    | NTU                   |
-chl_a_sonde |Chlorophyll A, measured with a sonde | UG/L          |
-chl_syn   |	Chlorophyll A, combining DEP "Chlorophyll A" and "Chlorophyll A - Phaeophytin|  UG/L |
-chl_dif   | Chlorophyll A, combining DEP "Chlorophyll A" minus "Phaeophytin" and "Chlorophyll A - Phaeophytin| UG/L |
+chl       |	Chlorophyll A, from "Chlorophyll A - Phaeophytin|  UG/L | |
 phaeo     | Phaeophytin                   | UG/L                 |
 nox_n     | Nitrate + Nitrite As N        | MG/L                 |
 nh4_n     | Ammonia as Nitrogen           | MG/L                 |
@@ -147,422 +119,308 @@ op_p      | Orthophosphate as Phosphorus  | MG/L                 |
 tp        | Total Phosphorus as P         | MG/L                 |
 tss       | Total Suspended Solids        | MG/L                 |
 secchi    | Secchi Depth                  | M                    |
-irr_air   | Irradiance (air)              | µmol/m2/s            |
-irr_water | Irradiance (surface water)    | µmol/m2/s            |
-irr_pct_  | Irradiance (% of air in surface water) | %           |
 
 ## Cross Occurrances of Data
 We are interested in figuring out what data occurs with other data.  A giant
-`xtab()` is possible, but unwieldy for more than three variables
+`xtab()` is possible, but unwieldy for more than three variables.
 
-We instead reducing all VARIABLES  to the value 1 if data exists, and then looking at
-correlations between data sets.
+We instead reducing all VARIABLES to the value 1 if data exists, and zero
+otherwise.  We then looking at correlations between data categories
 
 ```{r}
 tmp <- dep_data %>%
-  select(depth:secchi) %>%
+  select(chl:tss) %>%
   select_if(is.numeric) %>%
   mutate(across(everything(), ~ as.numeric( ! is.na(.x))))
-cor(tmp)
+round(cor(tmp, use = 'pairwise'),2)
 ```
 
-One obvious group pf variables that are often available together are the data 
-derived from sondes, including : 
-
-*  temp  
-*  salinity
-*  ph
-*  pctsat
-*  do
-*  turbidity
-*  chl_a_sonde
-
-These are typically not found in the same data rows as the other parameters,
-perhaps because sonde data can be a downcast, and thus includes a lot of
-depth information from nearly the same date and time.
-
-Chlorophyll data is also normally reported with at least some nutrient data,
-but the mix of available nutrient data varies somewhat.
-
-Secchi depth is about as likely to be reported on rows with other data as not.
-
-# Extract Sonde Data Subset
+# Depth Distribution of Samples
 ```{r}
-sonde_data <- dep_data %>%
-  select(site_name:chl_a_sonde) %>%
-  relocate(turbidity, turbidity_cens, .after = chl_a_sonde) %>%
-  filter(if_any(temp:turbidity, ~ ! is.na(.x)))
+ggplot(dep_data, aes(depth)) + geom_histogram(binwidth = 1)
+```
+So we still need to worry about depths. 
+
+```{r}
+tmp <- dep_data %>%
+  mutate(dclass = cut(depth,c(0,1,2, 5, 20)))
+         
+ xtabs(~ dclass + depth_designation, data = tmp, addNA = TRUE)
+```
+
+So overall, it looks like the depth designations ar ALMOST consistent.
+There are nine samples that lack a depth designation that were collected 
+at depth.  These are likely to be bottom samples, as all have depth reported as 
+over 10 meters.  We treat them as such here, and give them the depth designation 
+of "bot" (lowercase) so we remember that the designation has been added, and 
+was not part of the original data.
+
+```{r}
+dep_data %>%
+  filter(depth > 5, is.na(depth_designation))
+```
+
+```{r}
+dep_data <- dep_data %>%
+  mutate(depth_designation = if_else(depth > 5 & is.na(depth_designation),
+                                     'bot', depth_designation))
+
+tmp <- dep_data %>%
+  mutate(dclass = cut(depth,c(0,1,2, 5, 20)))
+xtabs(~ dclass + depth_designation, data = tmp, addNA = TRUE)
+```
+
+There are VERY few samples collected at maximum chlorophyll, so these
+data are not be of much use.
+
+# Surface Data Only
+## Nutrients
+```{r}
+surface_data <- dep_data %>%
+  filter(depth_designation == 'SUR' | is.na(depth_designation))
 ```
 
 
-```{r fig.width = 7, fig.height = 7 }
-tmp <- sonde_data %>%
-  select(depth:turbidity)
+There are a few sky-high NH4 values.  Let see where they occurred.
+```{r}
+surface_data %>%
+  filter(nh4_n > 2.5)
+```
+All have identical values of NH$  = 4, and all are flagged as being outside of 
+normal hold times, and all had flags indicating they are censored as "<4" these
+are probably best handled as missing data, so we delete the nh4-n data.
+
+We have a few more NH4 values at `nh4_n == 0.4`, which are 
+clearly also oddballs.
+```{r}
+surface_data %>%
+  filter(nh4_n < 2.5, nh4_n > 0.3)
+```
+
+Again, all have identical values of 0.4, all are flagged as censored, and 
+all are flagged as being outside of hold times.
+
+
+### Correct Misleading NH4 values
+```{r}
+surface_data <- surface_data %>%
+  mutate(nh4_n = if_else(nh4_n > 0.3, NA_real_, nh4_n))
+```
+
+### Nitrogen
+#### Pairs Plot
+```{r}
+tmp <- surface_data %>%
+  select(site, sample_date, nox_n:tp_flag) %>%
+  select(where(is.numeric))
+
 ggpairs(tmp, progress = FALSE)
-```
 
-## Delete Bad Temperature Data
-We note a series of low temperature data.  These appear to be problematic. There
-is a collection of temperature values below 1 C in spring and summer months, 
-which is unlikely. We delete those questionable temperature values. 
+```
 
 ```{r}
-sonde_data <- sonde_data %>%
-  mutate(temp = if_else(temp < 5,
-                 NA_real_, temp))
-```
-
-
-# Review of Sonde Data
-## Scatterplot Matrix (Pairs Plot)
-```{r fig.width = 7, fig.height = 7 }
-tmp <- sonde_data %>%
-  select(depth:turbidity)
 ggpairs(log(tmp), progress = FALSE)
 ```
-We see expected general correlations, somewhat blunted by complexity of sampling
-histories, with multiple sites and dates.
 
-## Sites by Depths (Useless?) 
+None of those correlations are especially high. The highest are
+for tn and nox_n, and op and tp. Neither is surprising.
+
+Note discrete nature of low values for nox_n and nh4_n.  those should mostly be
+censored observations, but we can't be sure here.
+
+#### DIN and Organic N
+We can calculate DIN as the sum of ammonium and nitrate, and organic N as the 
+difference between DIN and TN
 ```{r}
-tmp <- sonde_data %>%
-  mutate(dpth_clss = if_else(depth < 2, round(depth, 1), round(depth,0)))
-xtabs(~ dpth_clss + site, data = tmp)
-rm(tmp)
-```
-
-Do, most sonde data appears to be downcast data, with data collected at (or
-near) specific depths.  It looks like there has been inconsistency of handling 
-shallow water samples.
-
-## How often was each site sampled?
-We make an assumption here that sampling on one day is all related.
-```{r}
-tmp <- sonde_data %>%
-  group_by(site, sample_date) %>%
-  summarize(was_sampled = sum(! is.na(depth)) > 1,
-            .groups = 'drop')
-xt <- xtabs(~ sample_date + site, data = tmp)
-colSums(xt)
-rm(tmp, xt)
-```
-
-We see clearly that certain sites had sonde data collected much more frequently.
-Most of those are FOCB "profile" Sites, so it is likely there is some data 
-overlap with the FOCB downcast data.
-
-We can emphasize data from selected sites, which may clarify what is going on.
-WE chose first to process data from sites withat least 29 sampling dates.
-lets look at site "FR)9"
-
-```{r}
-sonde_data %>%
-  filter(site == 'FR09', year == 2018) %>%
-ggplot(aes(sample_date, depth, color = do, size = temp)) +
-  geom_point() +
-  scale_colour_gradient2(midpoint = 9, 
-                         high = scales::muted("red"), 
-                         low = scales::muted("blue")) +
-   scale_y_reverse()
-```
-
-```{r}
-sonde_data %>%
-  filter(site == 'FR09', year == 2018) %>%
-ggplot(aes(sample_date, depth, color = temp, size = do)) +
-  geom_point() +
-  scale_colour_gradient2(midpoint = 15, 
-                         high = scales::muted("red"), 
-                         low = scales::muted("blue")) +
-   scale_y_reverse()
-```
-
-
-To create a more typical depth-time plot we need to create data with equally 
-spaced (interpolated) values. 
-
-# Interpolation to regular grid
-Many of the ideas fro the following code came from the following web site:
-https://fishandwhistle.net/post/2019/depth-time-heatmaps/
-
-Our code differs because we have different programming practices and
-preferences.
-
-##Depth
-R includes an interpolation function, `approx()`.  It takes vector values
-for x and y, and  vector of desired locations(x values) for the estimates.
-
-Note that here we are predicting TEMPERATURE based on DEPTH, so the default 
-names `x` and `y` for the results of `approx()` are reversed.
-
-```{r}
-tmp <- sonde_data %>% 
-  select(site, sample_date, depth, month, year, temp) %>%
-  filter(site == 'FR09', year == 2018, month == 'Jul')
-interp <- as_tibble(approx(tmp$depth, tmp$temp, seq(0, 13, by = 0.25 )))
-interp
-```
-
-
-```{r}
-ggplot(tmp, aes(temp, depth)) +
-  geom_point() +
-  geom_point(mapping = aes(y,x), data = interp, shape = 3)
-   scale_y_reverse()
-   rm(tmp, interp)
-```
-
-So, we need a function that can interpolate from the surface (depth = 0) to
-maximum depth.  This is just a thin wrapper around `approx` that handles 
-a little housekeeping setting up the grid.
-
-```{r}
-interpol <- function(.depth, .value, .grid = NA, resolution = 0.5,
-                     name = 'interpolation') {
-  ddepth = .depth[! is.na(.depth) & ! is.na(.value)]
-  vvalue = .value[! is.na(.depth) & ! is.na(.value)]
-  max.depth = max(ddepth, na.rm = TRUE)
-  
-  # Round max depth to a whole number for interpolation
-  if ( ! abs((max.depth - round(max.depth)) < 0.001))
-    max.depth <- round(max.depth + 0.5)
-  
-  if (missing(.grid)) {
-    ggrid = seq(0, max.depth, by = resolution)
-  }
-  else {
-    ggrid = .grid
-  }
-  
-  vals <- as.tibble(approx(ddepth, vvalue, ggrid)) %>%
-    rename(depth = x, value = y) %>%
-    mutate(id = name) %>%
-    relocate(id)
-  return(vals)
-}
-  
-  
-tmp <- sonde_data %>% 
-  select(site, sample_date, depth, month, year, temp) %>%
-  filter(site == 'FR09', year == 2018, month == 'Jul')
-interp <- interpol(tmp$depth, tmp$temp)
-interp
+surface_data <- surface_data %>%
+  mutate(din = nh4_n + nox_n,
+         din_cens = nh4_n_cens | nox_n_cens,
+         din_flag = nh4_n_flag | nox_n_flag,
+         on       = tn - din,
+         on_flag  = din_flag | tn_flag,
+         on_cens_r  = din_flag)    #since this is calculated by difference
 
 ```
 
-Now, we need to walk a season's worth of data to create a regular grid. Ideally, 
-we want a function that can take a data series within a site, 
-and spit out the grid.  First, we run the above function for all 
+##### Ternary Diagrams
+```{r calc_proportions}
+proportion_data <- surface_data %>%
+  select(site:hour, nox_n:tn_flag, din:on_cens_r) %>%
+  relocate(nh4_n, on, tn, .after = nox_n)%>%
+  mutate(across(nox_n:on, ~ .x/tn)) %>%
+  
+  relocate(nh4_n_flag, on_flag, tn_flag, .after = nox_n_flag) %>%
+  relocate(nh4_n_cens, on_cens_r, .after = nox_n_cens) %>%
+  
+  select(site, sample_date, year, nox_n:on_flag, ) %>%
+  filter(! is.na(nox_n), ! is.na(nh4_n), ! is.na(on))
+```
 
-It is convenient to pass a data parameter here, so this can be 
-integrated into a tidyverse workflow, but it requires use of much more complex
-code.  Specifically, it allows us to pass column names unquoted.
+###### Draft Plots
+We borrowed function to simply add alpha values to color palettes from here:
+[Description](https://www.r-bloggers.com/2014/03/colorramppalettealpha-and-addalpha-helper-functions-for-adding-transparency-to-colors-in-r/)
+[GitHub](https://github.com/mylesmharrison/colorRampPaletteAlpha/blob/master/colorRampPaletteAlpha.R)
 
-```{r}
-all_dates_interp <- function(.dt, .thedate, .depth, .value,
-                             name = '', resolution = 0.5) {
-  
-  # These are ugly argument checks, since they don't provide nice error messages.
-  stopifnot(is.data.frame(.dt))
-  stopifnot(length(resolution) == 1)
-  
- # browser()
-
-  
-  
-  ddate  <- as.character(ensym(.thedate))
-  ddepth <- as.character(ensym(.depth))
-  vvalue <- as.character(ensym(.value))
-  
-  # ddate  <-  rlang::as_name(.thedate)
-  # ddepth <-  rlang::as_name(.depth)
-  # vvalue <-  rlang::as_name(.value)
-  
-  # Check that these are data names from the data frame
-  
-  stopifnot(ddate %in% names(.dt))
-  stopifnot(ddepth %in% names(.dt))  
-  stopifnot(vvalue %in% names(.dt))  
-
-  
-  # Create internal dataframe
-  # This is very wasteful of memory for large data sets
-  # but simplifies coding somewhat
-  # Note we make a "long" format dataframe here.
-  df <- tibble(the_date = .dt[[ddate]], 
-               dpth = .dt[[ddepth]],
-               val = .dt[[vvalue]])
-  
-  # establish the same grid for all dates, despite tides, etc.
-  
-  max_dpth <- max(df$dpth)
-  # Round max depth up to a whole number for interpolation
-  max_dpth <- if_else( (abs(max_dpth - round(max_dpth)) < 0.001),
-                      max_dpth, 
-                      round(max_dpth + 0.5))
-  
-  grid = seq(0, max_dpth, resolution)
-  
-  # now, we work through each date.  This returns a dataframe for each date.
-  res <- df %>%
-    group_by(the_date) %>%
-    nest() %>%
-    mutate(res = map(data, function(dat) interpol(dat$dpth, dat$val,
-                                                  .grid = grid,
-                                                  name = first(the_date))))
-  r = reduce(res$res, bind_rows)
-  return(r)
+```{r transparency_fxn}
+addalpha <- function(colors, alpha=1.0) {
+  r <- col2rgb(colors, alpha=T)
+  # Apply alpha
+  r[4,] <- alpha*255
+  r <- r/255.0
+  return(rgb(r[1,], r[2,], r[3,], r[4,]))
 }
 ```
 
-```{r}
-tmp <- sonde_data %>% 
-  select(site, sample_date, depth, month, year, temp) %>%
-  filter(site == 'FR09', year == 2018)
+###### Colored by Censored Data
+```{r ternary_data_quality, fig.width = 5, fig.height = 5}
+pal = addalpha(cbep_colors(), 0.5)
 
-test <- all_dates_interp(tmp, sample_date, depth, temp, resolution = 0.5)
+TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+            grid.lines = 5, grid.minor.lines = 0)
+TernaryPoints(proportion_data[4:6], pch = 16, 
+              col = pal[as.numeric(proportion_data$on_flag) + 1])
+
+legend('topleft', ncol = 1,
+        cex = .75,
+        legend = c('Data OK', 'Data Flag'),
+        box.lty = 0,
+        pch = 20,
+        col = cbep_colors())
+```
+
+###### Colored by Censored Data
+```{r ternary_censoring, fig.width = 5, fig.height = 5}
+pal = addalpha(cbep_colors(), 0.5)
+
+TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+            grid.lines = 5, grid.minor.lines = 0)
+TernaryPoints(proportion_data[4:6], pch = 16, 
+              col = pal[as.numeric(proportion_data$on_cens_r) + 1])
+
+legend('topleft', ncol = 1,
+       cex = .75,
+        legend = c('Uncensored', 'Censored'),
+        box.lty = 0,
+        pch = 20,
+        col = cbep_colors()[1:2])
+```
+
+Note the one point that falls outside of is basically a site where TN is very 
+close to DIN, so there was a slight negative estimate of ON.  It's from TB01
+from 07/21/2016. Other "low" ON sites are not related in any obvious way.
+
+###### Produce PDF
+We have slightly more control of size when we specify the graphics 
+device, as we can specify fonts and base font size.
+```{r ternary_pdf, fig.width = 3.5, fig.height = 3.5}
+cairo_pdf('ternary.pdf', width = 3.5, height = 5,
+          family = 'Montserrat', pointsize = 8)
+
+TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+            grid.lines = 5, grid.minor.lines = 0)
+TernaryPoints(proportion_data[4:6], pch = 16, 
+              col = pal[as.numeric(proportion_data$on_flag) + 1])
+
+legend('topleft', ncol = 1,
+       cex = .75,
+        legend = c('Data OK', 'Data Flag'),
+        box.lty = 0,
+        pch = 20,
+        col = cbep_colors())
+dev.off()
+```
+
+##### Histograms / Distributions
+Data is distributed fairly close to log-normal, although it is slightly
+heavy tailed and more skewed.
+```{r fig.width = 7, fig.height = 5}
+ggplot(surface_data, aes(tn)) + 
+  geom_histogram(aes(fill = site)) +
+  scale_x_log10() +
+  geom_vline(xintercept = 0.35, col = 'grey35') +
+    geom_vline(xintercept = 0.6, col = 'grey35')
+```
+So, in these data, the difference between eelgrass-oriented standards at about
+0.35 mg/l versus dissolved oxygen standards at about 0.6 mg/l is huge.
+
+### Phosphorus
+```{r fig.width = 7, fig.height = 5}
+ggplot(surface_data, aes(tp)) + 
+  geom_histogram(aes(fill = site, color = tp_cens)) +
+  scale_color_manual(values = c('black', 'yellow')) + 
+  scale_x_log10()
+```
+So very little of the data is censored....
+
+## N to P ratios
+```{r}
+surface_data <- surface_data %>%
+  mutate(n_to_p = tn/tp)
+```
+
+```{r fig.width = 7, fig.height = 5}
+ggplot(surface_data, aes(n_to_p)) + 
+  geom_histogram(aes(fill = site)) +
+  scale_x_log10() +
+  geom_vline(xintercept = 15, col = 'grey35')
+```
+
+Generally, our N:P ratios are well below 15, suggesting continued N limitation.
+Is that worth reporting on?  There may be N:P ratio variation between sites.
+
+## Chlorophyll and Phaeophytin
+This data does not include all chlorophyll data, because of ambiguities of 
+labeling in the source data.See "DEP_Nutrients_Preparation.Rmd" for details.
+```{r}
+tmp <- surface_data %>%
+  select(site, sample_date, chl, phaeo)
+```
+
+```{r}
+tmp %>%
+  select(chl, phaeo) %>%
+  mutate(chl_to_p = chl / phaeo) %>%
+  mutate(across(everything(), log)) %>%
+  ggpairs(progress = FALSE)
+```
+
+We see a lot of samples with phaeophytin well above chlorophyll levels.
+that is not impossible, but noteworthy.  It's worth looking at the scatter plot
+with a 1:1 reference line and with data wit hdata quality flags marked
+
+```{r}
+tmp <- surface_data %>%
+  select(site, sample_date,
+         chl, phaeo,
+         chl_flag, phaeo_flag, 
+         chl_cens, phaeo_cens)
+
+ggplot(tmp, aes(chl, phaeo)) +
+  geom_point(aes(color = chl_flag | phaeo_flag), alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0) +
+  scale_x_log10() + scale_y_log10() +
+  coord_equal() +
+  scale_color_manual(values = cbep_colors(), name = 'Data Quality Flag') +
+  theme_cbep(base_size = 12)
+```
+
+## Chlorophyll and Nutrients
+```{r}
+tmp <- surface_data %>%
+  select(site, sample_date, chl, phaeo, op_p, tp, tn, din, on, tss)
 ```
 
 
-```{r}
-ggplot(test, aes(id, depth, color = value)) +
-  geom_point(size = 3) +
-  scale_y_reverse() +
-   scale_colour_gradient2(midpoint = 15, 
-                         high = scales::muted("red"), 
-                         low = scales::muted("blue"), na.value = 'white')
+```{r fig.width = 7, fig.height = 7}
+tmp %>%
+  select(-site, -sample_date
+         ) %>%
+  mutate(across(everything(), log)) %>%
+  ggpairs(progress = FALSE)
 ```
 
-Great. now we need to interpolate the other way....
-
-### Dates
-We can use essentially the same logic to interpolate by dates.
-
-We assume this function is being passed a dataframe with three items:
-dates, depths and values.  It will return a (larger) dataframe that fills in
-values between observations.
-
-### Utility Function
-WE break out a fnction to generate a tibble for one depth
-```{r}
-interpol_dates <- function(.dts, .value, .grid = NA, resolution = 1,
-                     .id = '') {
-  #browser()
-  ddate = .dts[! is.na(.dts) & ! is.na(.value)]
-  vvalue = .value[! is.na(.dts) & ! is.na(.value)]
-  
-  
-  if (sum(! is.na(vvalue)) > 1) {   # We have some actual data....
-    # Establish the grid
-    first = min(ddate)
-    last =  max(ddate)
-    if (missing(.grid)) {
-      ggrid = seq(first, last, by = resolution)
-    }
-    else {
-      ggrid = .grid
-    }
-    vals <- as.tibble(approx(ddate, vvalue, ggrid)) %>%
-      rename(i_date = x, value = y) %>%
-      mutate(id = .id) %>%
-      relocate(id) }
-  else {
-    vals <- tibble(i_date = sort(unique(.dts)), value = NA_real_) %>%
-      mutate(id = .id) %>%
-      relocate(id) }
-  return(vals)
-}
-```
-
-
-```{r}
-tmp <- test %>% 
-  filter(depth == 0)
-interp <- interpol_dates(tmp$id, tmp$value, .id = tmp$depth)
-interp
-```
-
-
-
-
-```{r}
-all_dates_fill <- function(.dt, .thedate, .depth, .value, resolution = 1) {
-  
-  # These are ugly argument checks, since they don't provide nice error messages.
-  stopifnot(is.data.frame(.dt))
-  stopifnot(length(resolution) == 1)
-  
-  ddate  <- as.character(ensym(.thedate))
-  ddepth <- as.character(ensym(.depth))
-  vvalue <- as.character(ensym(.value))
-  
-  # Check that these are data names from the data frame
-  stopifnot(ddate %in% names(.dt))
-  stopifnot(ddepth %in% names(.dt))  
-  stopifnot(vvalue %in% names(.dt))  
-  browser()
-  # Create internal dataframe
-  # This is  wasteful of memory for large data sets but simplifies coding
-  df <- tibble(the_date = .dt[[ddate]], 
-               dpth = .dt[[ddepth]],
-               val = .dt[[vvalue]])
-  
-   l <- length(unique(df$the_date)) 
-   
-  # now, we work through each depth  This returns a dataframe for each date.
-  dff <- df %>%
-    group_by(dpth) %>%
-    nest()
-  res <- dff %>%
-    mutate(res = map(data, function(dat)
-                           interpol_dates(dat$the_date, 
-                                          dat$val, resolution = 1,
-                                          .id = dat$dpth)))
-  
-   rr <-  reduce(res$res, bind_rows)
-  return(rr)
-}
-```
-
-
-```{r}
-tt <- all_dates_fill(test, id, depth, value, resolution = 5 )[['res']]
-```
-
-So, it appears the problem is in teh map step, where map 
-
-
-
-```{r}
-dff <- test %>%
-  filter(depth == 1)
-resolution = 0.5
-
-grid = seq(0,15, by = 0.5)
-
-  first = min(dff$id)
-  last =  max(dff$id)
-
-test_fun <- function(dat) {
-    if (sum(! is.na(dat$value)) > 1) {
-    #  r <-   rep(10, length(grid))
-      
-      r <- approx(dat$id,
-                  dat$value,
-                  seq(first, last, resolution))
-    }
-    else {
-      r <-   rep(NA_real_, length(grid))
-    }
-           
-              
-  return(r)
-}
-
-dff$value
-  
-test_fun(dff)
-```
-
-
-
+Interestingly, The strongest correlation between chlorophyll and nutrients is with 
+TP, not TN....   Phaeophytin is correlated with Total N and organic N as well.
+Total suspended solids is  correlated with most metrics, suggesting it is 
+functioning here a surrogate for plankton abundance, which will be 
+correlated with everything.

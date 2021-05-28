@@ -144,7 +144,9 @@ tmp <- sonde_data %>%
   summarize(was_sampled = sum(! is.na(depth)) > 1,
             .groups = 'drop')
 xt <- xtabs(~ sample_date + site, data = tmp)
-colSums(xt)
+tot <- colSums(xt)
+tot
+names(tot[tot > 20])
 rm(tmp, xt)
 ```
 
@@ -161,9 +163,10 @@ sonde_data %>%
   filter(site == 'FR09', year == 2018) %>%
 ggplot(aes(sample_date, depth, color = do, size = temp)) +
   geom_point() +
-  scale_colour_gradient2(midpoint = 9, 
-                         high = scales::muted("red"), 
-                         low = scales::muted("blue")) +
+  scale_color_gradient2(midpoint = 9, 
+                         low = scales::muted("yellow", l = 90),
+                         mid = scales::muted("lightgreen", l = 50),
+                         high = scales::muted("lightblue", l = 20, c = 100)) +
    scale_y_reverse()
 ```
 
@@ -178,9 +181,8 @@ ggplot(aes(sample_date, depth, color = temp, size = do)) +
    scale_y_reverse()
 ```
 
-
 To create a more typical depth-time plot we need to create data with equally 
-spaced (interpolated) values. 
+spaced (interpolated) values. That is beyond our current scope.
 
 
 

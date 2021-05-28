@@ -20,6 +20,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
         -   [Chlorophyll Data](#chlorophyll-data)
         -   [Nitrogen Data](#nitrogen-data)
 -   [Review Irradiance Data](#review-irradiance-data)
+-   [Remove Sonde Data?](#remove-sonde-data)
 
 <img
     src="https://www.cascobayestuary.org/wp-content/uploads/2014/04/logo_sm.jpg"
@@ -44,10 +45,9 @@ library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
 #> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.1     v dplyr   1.0.5
+#> v tibble  3.1.2     v dplyr   1.0.6
 #> v tidyr   1.1.3     v stringr 1.4.0
 #> v readr   1.4.0     v forcats 0.5.1
-#> Warning: package 'tibble' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -1150,7 +1150,7 @@ test <- irr_data %>%
             .groups = 'drop')
 test %>%
   summarize(across(contains('_n'), ~any(.x) > 1))
-#> Warning in any(.x): coercing argument of type 'character' to logical
+#> Warning in any(site_name): coercing argument of type 'character' to logical
 #> # A tibble: 1 x 4
 #>   site_name irr_air_n irr_water_n irr_pct_n
 #>   <lgl>     <lgl>     <lgl>       <lgl>    
@@ -1160,3 +1160,40 @@ test <- test %>%
   select (-contains('_n'), site_name) %>%
   relocate(site_name)
 ```
+
+# Remove Sonde Data?
+
+We have only a handful of observations of temperature, salinity, etc.
+that are not obviously part of the sonde data. We need to decide whether
+we have enough non-sonde data to keep the temperature, salinity, etc.
+data that is not fully part of the sonde data to analyze it as part of
+the core nutrient data.
+
+Here are the rows of the data with at least on type of data assocaited
+with sondes, but no more than three of them.
+
+``` r
+dep_data %>%
+  # select rows with any data in the sonde related categories
+  # Ther3 is one flag column here that we don't want to count, so that's why > 1 
+  # (not 0).
+  filter(rowSums(across(
+             .cols = temp:chl_a_sonde,
+             .fns = ~ ! is.na(.x)))>1) %>%
+  # filter down to those where we only have a few of those metrics
+  filter(rowSums(across(
+             .cols = temp:chl_a_sonde,
+             .fns = ~ ! is.na(.x))) < 5) %>%
+  select(temp:chl_a_sonde)
+#> # A tibble: 3 x 7
+#>     temp salinity    ph pctsat do                 turbidity chl_a_sonde
+#>    <dbl> <chr>    <dbl> <chr>  <chr>              <chr>     <chr>      
+#> 1 16.8   29.66    NA    105    8.65               <NA>      <NA>       
+#> 2 NA     <NA>      7.87 <NA>   <NA>               1.9       J 3.4      
+#> 3  0.524 7.37     NA    98     9.7200000000000006 <NA>      <NA>
+```
+
+There are only two of them. Essentially all data in these data columns
+are associated with complete sonde records.
+
+We do not need to retain these variables in the nutrient data subset.

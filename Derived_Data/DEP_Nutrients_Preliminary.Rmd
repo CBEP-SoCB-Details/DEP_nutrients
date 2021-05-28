@@ -666,3 +666,34 @@ test <- test %>%
   relocate(site_name)
 ```
 
+
+# Remove Sonde Data?
+We have only a handful of observations of temperature, salinity, etc. that are 
+not obviously part of the sonde data.  We need to decide whether we have enough 
+non-sonde data to keep the temperature, salinity, etc. data that is not fully
+part of the sonde data to analyze it as part of the core nutrient data.
+
+Here are the rows of the data with at least on  type of data assocaited with
+sondes, but no more than three of them.
+```{r}
+dep_data %>%
+  # select rows with any data in the sonde related categories
+  # Ther3 is one flag column here that we don't want to count, so that's why > 1 
+  # (not 0).
+  filter(rowSums(across(
+             .cols = temp:chl_a_sonde,
+             .fns = ~ ! is.na(.x)))>1) %>%
+  # filter down to those where we only have a few of those metrics
+  filter(rowSums(across(
+             .cols = temp:chl_a_sonde,
+             .fns = ~ ! is.na(.x))) < 5) %>%
+  select(temp:chl_a_sonde)
+```
+
+There are only two of them.  Essentially all data in these data columns are
+associated with complete sonde records.
+
+We do not need to retain these variables in the nutrient data subset.
+
+
+

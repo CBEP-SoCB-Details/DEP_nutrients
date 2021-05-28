@@ -360,9 +360,7 @@ So....
     means.
 4.  We **still** have some evidence for a remaining location-scale relationship. 
 
-
-
-
+# Further Work
 We don't yet have a purpose for more complex models or more complex graphics.
 We await evaluation of other data before continuing.
 
