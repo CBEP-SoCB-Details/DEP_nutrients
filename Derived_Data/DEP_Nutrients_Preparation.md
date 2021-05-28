@@ -1,9 +1,10 @@
-Initial Review of Friends of Casco Bay Nutrient Data
+Preparation of Maine DEP Nutrients Data for Analysis
 ================
 Curtis C. Bohlen, Casco Bay Estuary Partnership.
 04/26/2021
 
 -   [Load libraries](#load-libraries)
+-   [Introduction](#introduction)
 -   [DIN Data](#din-data)
     -   [Folder References](#folder-references)
     -   [Load Data](#load-data)
@@ -67,6 +68,58 @@ library(CBEPgraphics)
 load_cbep_fonts()
 theme_set(theme_cbep())
 ```
+
+# Introduction
+
+This notebook documents steps taken to prepare DEP nutrient-related data
+for analysis. In particular, this R notebook takes the original data and
+transforms it, step by step, into derived data files used for further
+analysis and development of graphics.
+
+The original data included different types of data, collected on
+fundamentally different spatial and temporal supports. As a result, this
+notebook splits the data into five more limited, but internally more
+consistent data files. These include:
+
+1.  “dep\_secchi\_data.csv”: Data on secchi depths (collected at point
+    locations; only meaningful for a whole water column observations)
+
+2.  “dep\_sonde\_data.csv”: Vertical profile data derived from downcasts
+    of water quality sondes. This data is collected at regular or
+    (usually) irregular depths at more or less one time, data that is
+    anchored to specific location, date, and depth. Location, depth and
+    time of sample collection matter.
+
+3.  “dep\_irradiance\_data.csv”: Also data collected on a vertical
+    profile, but usually only up to a depth of a few meters. Data is
+    (usually) coupled to collection of matching data on surface
+    irradiance, to allow estimation of light extinction coefficients.
+    The primary purpose is to document light extinction coefficients
+    (and light levels in shallow waters where eelgrass may persist).
+
+4.  “dep\_nutrient\_data.csv”: Data on nutrients, chlorophyll and
+    suspended solids.  
+    This represents data derived principally from discrete physical
+    samples. Most data represents results of laboratory analyses of
+    water samples.
+
+5.  “dep\_locations.csv”: Geographic data , aligning site codes and site
+    names with latitudes and longitudes. This data set was used to
+    generate a GIS data layer, subsequently used to map selectred of
+    results of analyses.
+
+This notebook provides complete documentation regarding what data was
+included our derived data products. It also provides step by step
+documentation of how data was processed to generate those working data
+sets. In particular, the code provides a record of how we chose to deal
+with inconsistent data coding, small sample sizes for certain data
+types, treatment of data bearing data quality flags, and censored data.
+
+In some cases, especially where analytic choices about including on
+excluding data may have significant impact on results, or where in our
+judgment the choices to include of exclude data is more subjective,
+final exclusions occur in data analysis notebook to make them more
+visible to anyone reviewing these analyses.
 
 # DIN Data
 

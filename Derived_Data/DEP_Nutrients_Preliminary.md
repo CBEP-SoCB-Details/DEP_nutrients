@@ -1,4 +1,4 @@
-Initial Review of Friends of Casco Bay Nutrient Data
+Initial Review of Maine DEP Nutrient Data
 ================
 Curtis C. Bohlen, Casco Bay Estuary Partnership.
 04/26/2021
