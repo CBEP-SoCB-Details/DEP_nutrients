@@ -81,7 +81,9 @@ flags on all chlorophyll data.
 Since all sonde-related chlorophyll data was flagged as of questionable 
 accuracy (with "J" flags), it does us no good to track that information during 
 further analysis.  We retain all data, but recognize that it's accuracy is 
-suspect, especially in comparison to laboratory results.
+suspect, especially in comparison to laboratory results. We believe the 
+"J" flags reflect the fact that these are "raw" estimates of chlorophyll based
+only on observed florescence, never recalibarated based on laboratory samples.
 
 We also had a few "U<"  flags in the Turbidity data.  We separated out a 
 `TRUE` / `FALSE` flag to indicated censored values, with the name 
