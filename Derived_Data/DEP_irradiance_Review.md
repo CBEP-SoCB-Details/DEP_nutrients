@@ -4,6 +4,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 04/26/2021
 
 -   [Introduction](#introduction)
+-   [Review of theory](#review-of-theory)
 -   [Load Data](#load-data)
 -   [Summary of Metadata](#summary-of-metadata)
     -   [QA/QC Samples](#qaqc-samples)
@@ -12,9 +13,13 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 -   [Review of Irradiance Data](#review-of-irradiance-data)
     -   [Scatterplot Matrix (Pairs
         Plot)](#scatterplot-matrix-pairs-plot)
-    -   [Sites by Depths (Useless?)](#sites-by-depths-useless)
+    -   [Sites by Depths](#sites-by-depths)
     -   [How often was each site
         sampled?](#how-often-was-each-site-sampled)
+-   [Calculation of Light Extinction
+    Coefficients](#calculation-of-light-extinction-coefficients)
+-   [Output Light Extinction Coefficient
+    Data](#output-light-extinction-coefficient-data)
 
 <img
     src="https://www.cascobayestuary.org/wp-content/uploads/2014/04/logo_sm.jpg"
@@ -22,8 +27,12 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 
 # Introduction
 
-Review of irradiance data and calculation of light attenuation
-coefficients. (k values.)
+In this notebook, we review Maine DEP irradiance data and calculate
+light attenuation coefficients (k values.) We export a data set
+consisting of K estimates, sample sizes, and estimated standard errors
+of those estimates.
+
+# Review of theory
 
 Light attenuation is often measured as
 *I*<sub>*d*</sub> = *I*<sub>0</sub>*e*<sup> − *k**z*</sup>
@@ -80,12 +89,7 @@ library(GGally)
 #> Registered S3 method overwritten by 'GGally':
 #>   method from   
 #>   +.gg   ggplot2
-library(emmeans)
-#> 
-#> Attaching package: 'emmeans'
-#> The following object is masked from 'package:GGally':
-#> 
-#>     pigs
+#library(emmeans)
 #library(mgcv)
 
 library(CBEPgraphics)
@@ -125,8 +129,8 @@ the data to avoid confusion.
 ## Censoring Flags
 
 While preparing our working data, we separated raw observations from
-text annotations, including data quality flags. IN the sonde-related
-data, we only had to contend with (1) left censoring of turbidity data ,
+text annotations, including data quality flags. In the sonde-related
+data, we only had to contend with (1) left censoring of turbidity data,
 and (2) data quality flags on all chlorophyll data.
 
 Since all sonde-related chlorophyll data was flagged as of questionable
@@ -177,10 +181,10 @@ ggpairs(log(tmp), progress = FALSE)
 #> Warning: Removed 157 rows containing missing values (geom_point).
 ```
 
-<img src="DEP_Irradiance_Review_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+<img src="DEP_Irradiance_Review_files/figure-gfm/scatterplot_matrix-1.png" style="display: block; margin: auto;" />
 Note skewed data distributions, even for the percentage values.
 
-## Sites by Depths (Useless?)
+## Sites by Depths
 
 ``` r
 tmp <- irr_data %>%
@@ -342,7 +346,7 @@ ggplot(aes(sample_date, depth, color = irr_water)) +
   guides(color = guide_colourbar(title.position="top", barheight = .5))
 ```
 
-<img src="DEP_Irradiance_Review_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="DEP_Irradiance_Review_files/figure-gfm/plot_date_by_depth_2018-1.png" style="display: block; margin: auto;" />
 
 ``` r
 irr_data %>%
@@ -365,13 +369,17 @@ ggplot(aes(depth, irr_pct, color = factor(sample_date))) +
   facet_wrap("site")
 ```
 
-<img src="DEP_Irradiance_Review_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
-So, lets develop relevant estimates of K. We want to end up with one
-value of k for each unique depth profile.
+<img src="DEP_Irradiance_Review_files/figure-gfm/plot_light_by_depth-1.png" style="display: block; margin: auto;" />
+
+# Calculation of Light Extinction Coefficients
+
+We develop an estimates of K for each unique depth profile, using linear
+regression. This is an ideal context for use of nested tibbles, as we
+eventually can drop the raw data and focus only on the derived
+quantities.
 
 ``` r
 k_data <- irr_data %>%
-  filter(site %in% preferred_sites) %>%
   group_by(site, sample_date) %>%
   nest() %>%
   mutate(the_lm = map(data, 
@@ -395,23 +403,36 @@ k_data <- irr_data %>%
   unnest(everything()) %>%
   relocate(site_name, site, sample_date,  
            year, month, doy, start_hour) %>%
-  filter(k_n >4)
+  filter(k_n >4) %>%         # Removes sample with only two light values 
+  arrange(site, sample_date)
 ```
 
-PRV70 on 2020-09-24 had only two samples, making its regression
-estimates of k unstable. That date and location was the only time we
-have fewer than five light values on which to base an estimate of K. We
-deleted that date.
+PRV70 on 2020-09-24 had only two samples, making the estimates of k
+unstable and physically impossible. As a result, that site strongly
+influences models looking at k by location and date. We chose to delete
+any record (location by date) with fewer than five light values on which
+to base an estimate of k.
+
+\#\#Reorder `site` Factor For some reason, we were having trouble
+reordering the levels in `site` according to light attenuation estimates
+within the usual dplyr workflows.
+
+We resort to handling this manually (although this factor ordering will
+be lost when importing from `*.csv` files, it’s convenient to retain the
+code here for reference.)
 
 ``` r
-ggplot(k_data, aes(doy, k_est)) +
-  geom_point(aes(color = factor(year))) +
-  geom_smooth(method = 'gam', formula = y~ s(x)) +
-  geom_linerange(aes(ymin = k_est - k_se, ymax = k_est + k_se)) +
-  scale_y_log10() +
-  scale_color_manual(values = cbep_colors()) +
-  theme_cbep(base_size = 12) +
-  facet_wrap("site")
+(my_lvls <- levels(fct_reorder(k_data$site, k_data$k_est, mean,  na.rm = TRUE)))
+#>  [1] "P7CBI" "FR09"  "P6FGG" "FR07"  "FR05A" "HR05"  "FR04"  "BMR02" "LC02" 
+#> [10] "HR04"  "EEB18" "CBPR"  "FR03"  "FR05B" "PR-28" "HR03"  "RR-19" "PR-17"
+#> [19] "HR02"  "PRV70" "RR-01" "RR-13" "RR-06" "RR-20" "CR-31" "CR-44"
+
+k_data <- k_data %>%
+  mutate(site = factor(site, levels = my_lvls))
 ```
 
-<img src="DEP_Irradiance_Review_files/figure-gfm/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+# Output Light Extinction Coefficient Data
+
+``` r
+write_csv(k_data, 'light_extinction_data.csv')
+```

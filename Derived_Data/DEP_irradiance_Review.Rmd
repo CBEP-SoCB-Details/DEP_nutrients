@@ -20,9 +20,10 @@ knitr::opts_chunk$set(fig.align = 'center',
 ```
 
 # Introduction
-Review of irradiance data and calculation of light attenuation coefficients.
-(k values.)
+In this notebook, we review  Maine DEP irradiance data and calculate light
+attenuation coefficients (k values.)  We export a data set consisting of K estimates, sample sizes, and estimated standard errors of those estimates.
 
+# Review of theory
 Light attenuation is often measured as 
 $$
 I_d = I_0 e^{-kz}
@@ -60,12 +61,12 @@ linear model.
 
 
 #Load libraries
-```{r}
+```{r libraries}
 #library(readxl)
 library(tidyverse)
 
 library(GGally)
-library(emmeans)
+#library(emmeans)
 #library(mgcv)
 
 library(CBEPgraphics)
@@ -74,7 +75,7 @@ theme_set(theme_cbep())
 ```
 
 # Load Data
-```{r}
+```{r load_data}
 irr_data <- read_csv(file.path('dep_irradiance_data.csv')) %>%
               rename(sample_date = dt)
 ```
@@ -86,8 +87,8 @@ to avoid confusion.
 
 ## Censoring Flags
 While preparing our working data, we separated raw observations from text
-annotations, including data quality flags.  IN the sonde-related data, we only
-had to contend with (1) left censoring of turbidity data , and (2) data quality 
+annotations, including data quality flags.  In the sonde-related data, we only
+had to contend with (1) left censoring of turbidity data, and (2) data quality 
 flags on all chlorophyll data.
 
 Since all sonde-related chlorophyll data was flagged as of questionable 
@@ -120,15 +121,15 @@ irr_pct_  | Irradiance (% of air in surface water) | %           |
 
 # Review of Irradiance Data
 ## Scatterplot Matrix (Pairs Plot)
-```{r fig.width = 5, fig.height = 5 }
+```{r scatterplot_matrix, fig.width = 5, fig.height = 5 }
 tmp <- irr_data %>%
   select(irr_air:irr_pct)
 ggpairs(log(tmp), progress = FALSE)
 ```
 Note skewed data distributions, even for the percentage values.
 
-## Sites by Depths (Useless?) 
-```{r}
+## Sites by Depths
+```{r xtab_by_depth}
 tmp <- irr_data %>%
   mutate(dpth_clss = if_else(depth < 2, round(depth, 1), round(depth,0)))
 xtabs(~ dpth_clss + site, data = tmp)
@@ -142,7 +143,7 @@ It appears there are several different sampling conventions combined here:
 
 ## How often was each site sampled?
 We make an assumption here that sampling on one day is all related.
-```{r}
+```{r sampling_frequency}
 tmp <- irr_data %>%
   group_by(site, sample_date) %>%
   summarize(was_sampled = sum(! is.na(depth)) > 1,
@@ -153,7 +154,7 @@ tot
 ```
 
 We identify the sites with the richest data history, and focus on them.
-```{r}
+```{r high_freq_sites}
 (preferred_sites <- names(tot[tot > 20]))
 rm(tmp, xt)
 ```
@@ -162,7 +163,7 @@ We see clearly that certain sites had data collected much more frequently.
 These are the same sites for which we have more abundant sonde data.  we 
 will need to correlate these data in some intelligent way.
 
-```{r}
+```{r plot_date_by_depth_2018}
 irr_data %>%
   filter(year == 2018) %>%
   filter(site %in% preferred_sites) %>%
@@ -181,7 +182,7 @@ ggplot(aes(sample_date, depth, color = irr_water)) +
   
 ```
 
-```{r fig.width = 7, fig.height = 5}
+```{r plot_light_by_depth, fig.width = 7, fig.height = 5}
 irr_data %>%
   filter(year == 2018) %>%
   filter(site %in% preferred_sites) %>%
@@ -201,12 +202,15 @@ ggplot(aes(depth, irr_pct, color = factor(sample_date))) +
   #guides(color = guide_colorbar(title.position="top", barheight = .5)) +
   facet_wrap("site")
 ```
-So, lets develop relevant estimates of K.  We want to end up with one value of
-k for each unique depth profile.
 
-```{r}
+
+# Calculation of Light Extinction Coefficients
+We develop an estimates of K  for each unique depth profile, using linear
+regression. This is an ideal context for use of nested tibbles, as we eventually 
+can drop the raw data and focus only on the derived quantities.
+
+```{r calculate_k}
 k_data <- irr_data %>%
-  filter(site %in% preferred_sites) %>%
   group_by(site, sample_date) %>%
   nest() %>%
   mutate(the_lm = map(data, 
@@ -230,22 +234,33 @@ k_data <- irr_data %>%
   unnest(everything()) %>%
   relocate(site_name, site, sample_date,  
            year, month, doy, start_hour) %>%
-  filter(k_n >4)
+  filter(k_n >4) %>%         # Removes sample with only two light values 
+  arrange(site, sample_date)
 ```
 
-PRV70	on 2020-09-24 had only two samples, making its regression estimates of k
-unstable.  That date and location was the only time we have fewer than five 
-light values on which to base an estimate of K. We deleted that date.
+PRV70	on 2020-09-24 had only two samples, making the estimates of k unstable and
+physically impossible.  As a result, that site strongly influences models
+looking at k by location and date. We chose to delete any record (location by date) with fewer than five light values on which to base an estimate of k.
 
-```{r fig.width = 6, fig.height = 4}
-ggplot(k_data, aes(doy, k_est)) +
-  geom_point(aes(color = factor(year))) +
-  geom_smooth(method = 'gam', formula = y~ s(x)) +
-  geom_linerange(aes(ymin = k_est - k_se, ymax = k_est + k_se)) +
-  scale_y_log10() +
-  scale_color_manual(values = cbep_colors()) +
-  theme_cbep(base_size = 12) +
-  facet_wrap("site")
+##Reorder `site` Factor
+For some reason, we were having trouble reordering the levels in `site` 
+according to light attenuation estimates within the usual dplyr workflows.
+
+We resort to handling this manually (although this factor ordering will be lost
+when importing from `*.csv` files, it's convenient to retain the code here for
+reference.)
+
+```{r reorder_site}
+(my_lvls <- levels(fct_reorder(k_data$site, k_data$k_est, mean,  na.rm = TRUE)))
+
+k_data <- k_data %>%
+  mutate(site = factor(site, levels = my_lvls))
 ```
+
+# Output Light Extinction Coefficient Data
+```{r save_data}
+write_csv(k_data, 'light_extinction_data.csv')
+```
+
 
 
