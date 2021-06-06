@@ -9,7 +9,8 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
     -   [Folder References](#folder-references)
     -   [Load Data](#load-data)
 -   [Simplify Names](#simplify-names)
--   [Split Site Code and Depth Code](#split-site-code-and-depth-code)
+-   [\# Split Site Code and Depth
+    Code](#-split-site-code-and-depth-code)
 -   [Delete Data QC Samples](#delete-data-qc-samples)
 -   [Generate Irradiance Data](#generate-irradiance-data)
     -   [Remove Irradiance Data](#remove-irradiance-data)
@@ -192,7 +193,7 @@ dep_data <- dep_data %>%
          irr_pct = `Irradiance (% of air in surface water)`)
 ```
 
-# Split Site Code and Depth Code
+# \# Split Site Code and Depth Code
 
 A number of entries under `site` are composites, with a site code
 followed by " - SUR“,” - BOT“, or” - MAX“. We split those off here. We
@@ -207,7 +208,8 @@ dep_data <- dep_data %>%
                                      NA_character_),
          site = if_else(grepl(' - ', site),
                           substr(site, 1, nchar(site) - 5),
-                          site)) %>%
+                          site),
+         site = str_trim(site)) %>%
   relocate(depth_designation, .after = site)
 ```
 
@@ -217,16 +219,16 @@ dep_data %>%
 #> # A tibble: 277 x 40
 #>    site_name      site  depth_designati~ Date                Time               
 #>    <chr>          <chr> <chr>            <dttm>              <dttm>             
-#>  1 BANDM RAILROA~ "BMR~ " SUR"           2018-05-10 00:00:00 1899-12-31 12:42:00
-#>  2 BANDM RAILROA~ "BMR~ " SUR"           2018-05-31 00:00:00 1899-12-31 12:00:00
-#>  3 BANDM RAILROA~ "BMR~ " SUR"           2018-05-31 00:00:00 1899-12-31 12:05:00
-#>  4 BANDM RAILROA~ "BMR~ " SUR"           2018-06-25 00:00:00 1899-12-31 14:00:00
-#>  5 BANDM RAILROA~ "BMR~ " SUR"           2018-07-18 00:00:00 1899-12-31 14:18:00
-#>  6 BANDM RAILROA~ "BMR~ " SUR"           2018-07-18 00:00:00 1899-12-31 14:25:00
-#>  7 BANDM RAILROA~ "BMR~ " SUR"           2018-08-08 00:00:00 1899-12-31 13:20:00
-#>  8 BANDM RAILROA~ "BMR~ " SUR"           2018-08-30 00:00:00 1899-12-31 12:18:00
-#>  9 BANDM RAILROA~ "BMR~ " SUR"           2018-09-20 00:00:00 1899-12-31 12:45:00
-#> 10 BANDM RAILROA~ "BMR~ " SUR"           2018-09-20 00:00:00 1899-12-31 12:45:00
+#>  1 BANDM RAILROA~ BMR02 " SUR"           2018-05-10 00:00:00 1899-12-31 12:42:00
+#>  2 BANDM RAILROA~ BMR02 " SUR"           2018-05-31 00:00:00 1899-12-31 12:00:00
+#>  3 BANDM RAILROA~ BMR02 " SUR"           2018-05-31 00:00:00 1899-12-31 12:05:00
+#>  4 BANDM RAILROA~ BMR02 " SUR"           2018-06-25 00:00:00 1899-12-31 14:00:00
+#>  5 BANDM RAILROA~ BMR02 " SUR"           2018-07-18 00:00:00 1899-12-31 14:18:00
+#>  6 BANDM RAILROA~ BMR02 " SUR"           2018-07-18 00:00:00 1899-12-31 14:25:00
+#>  7 BANDM RAILROA~ BMR02 " SUR"           2018-08-08 00:00:00 1899-12-31 13:20:00
+#>  8 BANDM RAILROA~ BMR02 " SUR"           2018-08-30 00:00:00 1899-12-31 12:18:00
+#>  9 BANDM RAILROA~ BMR02 " SUR"           2018-09-20 00:00:00 1899-12-31 12:45:00
+#> 10 BANDM RAILROA~ BMR02 " SUR"           2018-09-20 00:00:00 1899-12-31 12:45:00
 #> # ... with 267 more rows, and 35 more variables: dt <date>, month <fct>,
 #> #   year <dbl>, time <chr>, hour <dbl>, Sample Type <chr>, QC Type <chr>,
 #> #   Sampled By <chr>, depth <dbl>, Depth Unit <chr>, temp <dbl>,

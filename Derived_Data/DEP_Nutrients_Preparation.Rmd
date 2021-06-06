@@ -146,7 +146,7 @@ dep_data <- dep_data %>%
          irr_pct = `Irradiance (% of air in surface water)`)
 ```
 
-# Split Site Code and Depth Code
+# # Split Site Code and Depth Code
 A number of entries under `site` are composites, with a site code followed by
 " - SUR", " - BOT", or " - MAX".  We split those off here.  We chose to retain
 "RR00_A" as a separate site, because we don't understand why DEP gave it a 
@@ -158,7 +158,8 @@ dep_data <- dep_data %>%
                                      NA_character_),
          site = if_else(grepl(' - ', site),
                           substr(site, 1, nchar(site) - 5),
-                          site)) %>%
+                          site),
+         site = str_trim(site)) %>%
   relocate(depth_designation, .after = site)
 ```
 
