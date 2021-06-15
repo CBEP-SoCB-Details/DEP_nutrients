@@ -20,8 +20,9 @@ knitr::opts_chunk$set(fig.align = 'center',
 ```
 
 # Introduction
-THis notebook focuses on analysis of spatial and tempora lpatterns in light
-attenuation coefficients (k) calculated from Maine DEP irradiance data Calculation of Light Attenuation Coefficients (k values), and analysis of spatial and 
+This notebook focuses on analysis of spatial and temporal patterns in light
+attenuation coefficients (k) calculated from Maine DEP irradiance data 
+Calculation of Light Attenuation Coefficients (k values), and analysis of spatial and 
 temporal patterns in light attenuation based on Maine DEP irradiance data.
 
 # Review of Theory
@@ -624,6 +625,9 @@ results <- as_tibble(emms_hm) %>%
          k_observs = k_vals) %>% 
   relocate(site, site_name, k_mean, k_se, k_observs, light_observs)
 ```
+
+# Consider Robust Linear Models Instead?
+The function `rlm()` fro, `MASS` may handle the location-scale problems better...
 
 # Export Results for GIS
 ```{r save_results}

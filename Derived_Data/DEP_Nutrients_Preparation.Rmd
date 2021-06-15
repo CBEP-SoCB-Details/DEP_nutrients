@@ -146,7 +146,7 @@ dep_data <- dep_data %>%
          irr_pct = `Irradiance (% of air in surface water)`)
 ```
 
-# # Split Site Code and Depth Code
+## Split Site Code and Depth Code
 A number of entries under `site` are composites, with a site code followed by
 " - SUR", " - BOT", or " - MAX".  We split those off here.  We chose to retain
 "RR00_A" as a separate site, because we don't understand why DEP gave it a 
@@ -422,6 +422,27 @@ dep_data_4 <- dep_data_4 %>%
 ```
 
 # Extract Geographic Locations
+
+## A Simple Function for Capitalizing Strings
+```{r}
+simple_title <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  return(paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)),
+      sep="", collapse=" "))
+}
+
+to_title <- function(.x) {
+  v <- sapply(.x, simple_title, USE.NAMES = FALSE)
+  return(v)
+}
+```
+
+```{r}
+a <- to_title(c('Testing a NUMBER of IdEas here.', 'And again!'))
+a
+```
+
+
 ```{r}
 geographic_data <- dep_data_4 %>%
   select(site, site_name, Latitude, Longitude) %>%
@@ -438,6 +459,22 @@ geographic_data <- dep_data_4 %>%
   mutate(short_name = sub( '- LC0', '', short_name)) %>%
   mutate(short_name = sub(' -.*$', '', short_name)) %>%
   mutate(short_name = sub(' V70', '', short_name)) %>%
+  
+  mutate(short_name = sub(' RIVER', '', short_name)) %>%
+  mutate(short_name = sub('FORE', 'FORE RIVER', short_name)) %>%
+  
+  mutate(short_name = sub('TRIB0', 'TRIB', short_name)) %>%
+  mutate(short_name = if_else(site == 'BMR02',
+                              'B&M Railroad',
+                              short_name)) %>%
+  mutate(short_name = if_else(site == 'PRV70',
+                              'Walton Park',
+                              short_name)) %>%
+  mutate(short_name = if_else(site == 'CBPR',
+                              'Presumpscot Mouth',
+                              short_name)) %>%
+  
+  mutate(short_name = to_title(short_name)) %>%
   
   relocate(short_name, .after = site_name) %>%
   unique()

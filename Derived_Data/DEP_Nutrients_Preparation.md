@@ -9,8 +9,8 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
     -   [Folder References](#folder-references)
     -   [Load Data](#load-data)
 -   [Simplify Names](#simplify-names)
--   [\# Split Site Code and Depth
-    Code](#-split-site-code-and-depth-code)
+    -   [Split Site Code and Depth
+        Code](#split-site-code-and-depth-code)
 -   [Delete Data QC Samples](#delete-data-qc-samples)
 -   [Generate Irradiance Data](#generate-irradiance-data)
     -   [Remove Irradiance Data](#remove-irradiance-data)
@@ -32,6 +32,8 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
         -   [Total Phosphorus](#total-phosphorus)
         -   [TSS](#tss)
 -   [Extract Geographic Locations](#extract-geographic-locations)
+    -   [A Simple Function for Capitalizing
+        Strings](#a-simple-function-for-capitalizing-strings)
 -   [Extract Sonde Data](#extract-sonde-data)
     -   [Delete Bad Temperature Data](#delete-bad-temperature-data)
     -   [Remove Sonde Data from Core
@@ -193,7 +195,7 @@ dep_data <- dep_data %>%
          irr_pct = `Irradiance (% of air in surface water)`)
 ```
 
-# \# Split Site Code and Depth Code
+## Split Site Code and Depth Code
 
 A number of entries under `site` are composites, with a site code
 followed by " - SUR“,” - BOT“, or” - MAX“. We split those off here. We
@@ -556,6 +558,27 @@ dep_data_4 <- dep_data_4 %>%
 
 # Extract Geographic Locations
 
+## A Simple Function for Capitalizing Strings
+
+``` r
+simple_title <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  return(paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)),
+      sep="", collapse=" "))
+}
+
+to_title <- function(.x) {
+  v <- sapply(.x, simple_title, USE.NAMES = FALSE)
+  return(v)
+}
+```
+
+``` r
+a <- to_title(c('Testing a NUMBER of IdEas here.', 'And again!'))
+a
+#> [1] "Testing A Number Of Ideas Here." "And Again!"
+```
+
 ``` r
 geographic_data <- dep_data_4 %>%
   select(site, site_name, Latitude, Longitude) %>%
@@ -572,6 +595,22 @@ geographic_data <- dep_data_4 %>%
   mutate(short_name = sub( '- LC0', '', short_name)) %>%
   mutate(short_name = sub(' -.*$', '', short_name)) %>%
   mutate(short_name = sub(' V70', '', short_name)) %>%
+  
+  mutate(short_name = sub(' RIVER', '', short_name)) %>%
+  mutate(short_name = sub('FORE', 'FORE RIVER', short_name)) %>%
+  
+  mutate(short_name = sub('TRIB0', 'TRIB', short_name)) %>%
+  mutate(short_name = if_else(site == 'BMR02',
+                              'B&M Railroad',
+                              short_name)) %>%
+  mutate(short_name = if_else(site == 'PRV70',
+                              'Walton Park',
+                              short_name)) %>%
+  mutate(short_name = if_else(site == 'CBPR',
+                              'Presumpscot Mouth',
+                              short_name)) %>%
+  
+  mutate(short_name = to_title(short_name)) %>%
   
   relocate(short_name, .after = site_name) %>%
   unique()

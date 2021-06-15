@@ -192,7 +192,7 @@ nutrients, while "BOT" samples contain measurements of nutrients.
 The "RR00_A" samples are apparently a time series of nutrient values from 2017.
 Only a single other sample is reported from RROO, from September of 2015.
 
-##Depth Units
+## Depth Units
 ```{r}
 unique(dep_data$`Depth Unit`)
 ```
