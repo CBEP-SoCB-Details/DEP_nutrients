@@ -423,7 +423,7 @@ We have slightly more control of size when we specify the graphics
 device, as we can specify fonts and base font size.
 
 ``` r
-cairo_pdf('figures/ternary.pdf', width = 3.5, height = 5,
+cairo_pdf('figures/ternary_core.pdf', width = 3.5, height = 5,
           family = 'Montserrat', pointsize = 8)
 
 TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
@@ -1349,7 +1349,7 @@ gam.check(core_n2p_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>          k'  edf k-index p-value  
-    #> s(doy) 3.00 1.81    0.83   0.025 *
+    #> s(doy) 3.00 1.81    0.83   0.015 *
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     par(oldpar)
