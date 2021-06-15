@@ -447,7 +447,7 @@ dev.off()
 ``` r
 core_results <- core_data %>%
   group_by(site, short_name) %>%
-  summarize(across(c(nox_n, nh4_n, din, on, tn),
+  summarize(across(c(nox_n, nh4_n, din, on, tn, chl, tss),
                    .fns = c(mn = ~ mean(.x, na.rm = TRUE),
                             sd = ~ sd(.x, na.rm = TRUE), 
                             n = ~sum(! is.na(.x)),
@@ -749,9 +749,9 @@ gam.check(core_din_gam)
     #> Basis dimension (k) checking results. Low p-value (k-index<1) may
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
-    #>            k'  edf k-index p-value   
-    #> s(doy)   4.00 2.80    0.77   0.005 **
-    #> s(yearf) 3.00 1.89      NA      NA   
+    #>            k'  edf k-index p-value    
+    #> s(doy)   4.00 2.80    0.77  <2e-16 ***
+    #> s(yearf) 3.00 1.89      NA      NA    
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     par(oldpar)
@@ -1349,7 +1349,7 @@ gam.check(core_n2p_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>          k'  edf k-index p-value  
-    #> s(doy) 3.00 1.81    0.83   0.015 *
+    #> s(doy) 3.00 1.81    0.83    0.05 *
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     par(oldpar)

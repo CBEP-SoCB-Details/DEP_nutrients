@@ -473,6 +473,9 @@ geographic_data <- dep_data_4 %>%
   mutate(short_name = if_else(site == 'CBPR',
                               'Presumpscot Mouth',
                               short_name)) %>%
+  mutate(short_name = if_else(site == 'RR00_A',
+                              'Royal A',
+                              short_name)) %>%
   
   mutate(short_name = to_title(short_name)) %>%
   

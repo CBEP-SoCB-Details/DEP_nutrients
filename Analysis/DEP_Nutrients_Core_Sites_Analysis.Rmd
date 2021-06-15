@@ -309,7 +309,7 @@ dev.off()
 ```{r core_results}
 core_results <- core_data %>%
   group_by(site, short_name) %>%
-  summarize(across(c(nox_n, nh4_n, din, on, tn),
+  summarize(across(c(nox_n, nh4_n, din, on, tn, chl, tss),
                    .fns = c(mn = ~ mean(.x, na.rm = TRUE),
                             sd = ~ sd(.x, na.rm = TRUE), 
                             n = ~sum(! is.na(.x)),
