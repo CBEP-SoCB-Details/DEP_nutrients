@@ -13,7 +13,6 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 -   [Royal and Cousins Data Subset from
     2017](#royal-and-cousins-data-subset-from-2017)
 -   [Summary of Metadata](#summary-of-metadata)
-    -   [WARNING](#warning)
     -   [QA/QC Samples](#qaqc-samples)
     -   [Data Quality Flags and Censoring
         Flags](#data-quality-flags-and-censoring-flags)
@@ -23,8 +22,6 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
     -   [Colored by Site](#colored-by-site)
     -   [Produce PDF](#produce-pdf)
 -   [Descriptive Statistics](#descriptive-statistics)
-    -   [Output Decriptive Statistics for
-        GIS](#output-decriptive-statistics-for-gis)
 -   [DIN Analysis](#din-analysis)
     -   [Data Prevalence](#data-prevalence)
     -   [Histograms / Distributions](#histograms--distributions)
@@ -241,12 +238,6 @@ rm(surface_data, dep_data, site_names, royal_sites)
 ```
 
 # Summary of Metadata
-
-## WARNING
-
-Almost all data from 2017 in the Royal is flagged with a “Validation
-Comment” warning that the samples were “out of hold time”, but
-relatively little data was flagged with a data quality flag.
 
 ## QA/QC Samples
 
@@ -493,12 +484,6 @@ royal_results <- royal_data_2017 %>%
 
 A Seasonal Pattern appears likely. Variances do not appear equal.
 
-## Output Decriptive Statistics for GIS
-
-``` r
-write_csv(royal_results, file.path(sibling, 'GIS', 'royal_locations_results.csv'))
-```
-
 # DIN Analysis
 
 ## Data Prevalence
@@ -689,7 +674,7 @@ gam.check(royal_din_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>        k' edf k-index p-value
-    #> s(doy)  4   1    0.94    0.26
+    #> s(doy)  4   1    0.94    0.29
     par(oldpar)
 
 # TN Analysis
@@ -914,7 +899,7 @@ gam.check(royal_tn_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>          k'  edf k-index p-value
-    #> s(doy) 3.00 1.64    0.93    0.28
+    #> s(doy) 3.00 1.64    0.93    0.29
     par(oldpar)
 
 # N to P ratios

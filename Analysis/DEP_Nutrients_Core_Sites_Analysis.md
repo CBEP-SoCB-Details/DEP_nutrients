@@ -21,8 +21,6 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
     -   [Pairs Plot](#pairs-plot)
         -   [Ternary Diagrams](#ternary-diagrams)
 -   [Descriptive Statistics](#descriptive-statistics)
-    -   [Output Decriptive Statistics for
-        GIS](#output-decriptive-statistics-for-gis)
 -   [DIN Analysis](#din-analysis)
     -   [Data Prevalence](#data-prevalence)
     -   [Core Sites Data 2018-2020](#core-sites-data-2018-2020)
@@ -458,12 +456,6 @@ core_results <- core_data %>%
             .groups = 'drop') %>%
   mutate(site = fct_reorder(factor(site), tn_md),
          short_name = fct_reorder(factor(short_name), tn_md))
-```
-
-### Output Decriptive Statistics for GIS
-
-``` r
-write_csv(core_results, file.path(sibling, 'GIS', 'core_locations_results.csv'))
 ```
 
 # DIN Analysis

@@ -421,68 +421,6 @@ dep_data_4 <- dep_data_4 %>%
   relocate(secchi_on_bottom, .after = secchi)
 ```
 
-# Extract Geographic Locations
-
-## A Simple Function for Capitalizing Strings
-```{r}
-simple_title <- function(x) {
-  s <- strsplit(x, " ")[[1]]
-  return(paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)),
-      sep="", collapse=" "))
-}
-
-to_title <- function(.x) {
-  v <- sapply(.x, simple_title, USE.NAMES = FALSE)
-  return(v)
-}
-```
-
-```{r}
-a <- to_title(c('Testing a NUMBER of IdEas here.', 'And again!'))
-a
-```
-
-
-```{r}
-geographic_data <- dep_data_4 %>%
-  select(site, site_name, Latitude, Longitude) %>%
-  mutate(short_name = sub( '- CR-', '', site_name)) %>%
-  mutate(short_name = sub( '- CR', '', short_name)) %>%
-  mutate(short_name = sub( '- PR-', '', short_name)) %>%
-  mutate(short_name = sub( '- PR', '', short_name)) %>%
-  mutate(short_name = sub( '- RR-', '', short_name)) %>%
-  mutate(short_name = sub( '- RR', '', short_name)) %>%
-  mutate(short_name = sub( '- AC0', '', short_name)) %>%
-  mutate(short_name = sub( '- CR', '', short_name)) %>%
-  mutate(short_name = sub( '- FR0', '', short_name)) %>%
-  mutate(short_name = sub( '- HR0', '', short_name)) %>%
-  mutate(short_name = sub( '- LC0', '', short_name)) %>%
-  mutate(short_name = sub(' -.*$', '', short_name)) %>%
-  mutate(short_name = sub(' V70', '', short_name)) %>%
-  
-  mutate(short_name = sub(' RIVER', '', short_name)) %>%
-  mutate(short_name = sub('FORE', 'FORE RIVER', short_name)) %>%
-  
-  mutate(short_name = sub('TRIB0', 'TRIB', short_name)) %>%
-  mutate(short_name = if_else(site == 'BMR02',
-                              'B&M Railroad',
-                              short_name)) %>%
-  mutate(short_name = if_else(site == 'PRV70',
-                              'Walton Park',
-                              short_name)) %>%
-  mutate(short_name = if_else(site == 'CBPR',
-                              'Presumpscot Mouth',
-                              short_name)) %>%
-  mutate(short_name = if_else(site == 'RR00_A',
-                              'Royal A',
-                              short_name)) %>%
-  
-  mutate(short_name = to_title(short_name)) %>%
-  
-  relocate(short_name, .after = site_name) %>%
-  unique()
-```
-
 # Extract Sonde Data
 We also extract a subset of the data derived from sondes for independent review,
 but as we dis not delete those data from the full data set, the two data sets 
@@ -552,7 +490,6 @@ write_csv(dep_data_6, 'dep_nutrient_data.csv', na = '')
 write_csv(irr_data, 'dep_irradiance_data.csv')
 write_csv(sonde_data, 'dep_sonde_data.csv')
 write_csv(secchi_data, 'dep_secchi_data.csv')
-write_csv(geographic_data, 'dep_locations.csv')
 ```
 
 
