@@ -107,7 +107,7 @@ surface_data <- surface_data %>%
 
 ### Add Shorter Site Names
 ```{r add_names}
-site_names <- read_csv(file.path(sibling, 'dep_locations.csv')) %>%
+site_names <- read_csv(file.path(sibling, "GIS", 'dep_locations.csv')) %>%
   select(site, short_name)
 surface_data <- surface_data %>%
   left_join(site_names, by = 'site') %>%
@@ -226,7 +226,7 @@ proportion_data <- royal_data_2017 %>%
 ```{r ternary_censoring, fig.width = 5, fig.height = 5}
 pal = viridis(10, alpha =  0.75)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, cex = 2 * proportion_data$tn,
               col = pal[as.numeric(proportion_data$site)])
@@ -252,7 +252,7 @@ device, as we can specify fonts and base font size.
 cairo_pdf('figures/ternary_royal.pdf', width = 3.5, height = 5,
           family = 'Montserrat', pointsize = 8)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$site)])

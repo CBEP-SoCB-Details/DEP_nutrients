@@ -176,14 +176,14 @@ surface_data <- surface_data %>%
 ### Add Shorter Site Names
 
 ``` r
-site_names <- read_csv(file.path(sibling, 'dep_locations.csv')) %>%
+site_names <- read_csv(file.path(sibling, "GIS", 'dep_locations.csv')) %>%
   select(site, short_name)
 #> 
 #> -- Column specification --------------------------------------------------------
 #> cols(
-#>   site = col_character(),
 #>   site_name = col_character(),
 #>   short_name = col_character(),
+#>   site = col_character(),
 #>   Latitude = col_double(),
 #>   Longitude = col_double()
 #> )
@@ -379,7 +379,7 @@ addalpha <- function(colors, alpha=1.0) {
 ``` r
 pal = addalpha(cbep_colors(), 0.5)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$on_flag | 
@@ -400,7 +400,7 @@ legend('topleft', ncol = 1,
 ``` r
 pal = viridis(9, alpha=0.5)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$site)])
@@ -424,7 +424,7 @@ device, as we can specify fonts and base font size.
 cairo_pdf('figures/ternary_core.pdf', width = 3.5, height = 5,
           family = 'Montserrat', pointsize = 8)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$site)])
@@ -1341,7 +1341,7 @@ gam.check(core_n2p_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>          k'  edf k-index p-value  
-    #> s(doy) 3.00 1.81    0.83    0.05 *
+    #> s(doy) 3.00 1.81    0.83    0.03 *
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     par(oldpar)

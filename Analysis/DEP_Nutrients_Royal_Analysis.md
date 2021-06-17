@@ -173,14 +173,14 @@ surface_data <- surface_data %>%
 ### Add Shorter Site Names
 
 ``` r
-site_names <- read_csv(file.path(sibling, 'dep_locations.csv')) %>%
+site_names <- read_csv(file.path(sibling, "GIS", 'dep_locations.csv')) %>%
   select(site, short_name)
 #> 
 #> -- Column specification --------------------------------------------------------
 #> cols(
-#>   site = col_character(),
 #>   site_name = col_character(),
 #>   short_name = col_character(),
+#>   site = col_character(),
 #>   Latitude = col_double(),
 #>   Longitude = col_double()
 #> )
@@ -418,7 +418,7 @@ proportion_data <- royal_data_2017 %>%
 ``` r
 pal = viridis(10, alpha =  0.75)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, cex = 2 * proportion_data$tn,
               col = pal[as.numeric(proportion_data$site)])
@@ -448,7 +448,7 @@ graphics device, as we can specify fonts and base font size.
 cairo_pdf('figures/ternary_royal.pdf', width = 3.5, height = 5,
           family = 'Montserrat', pointsize = 8)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$site)])
@@ -674,7 +674,7 @@ gam.check(royal_din_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>        k' edf k-index p-value
-    #> s(doy)  4   1    0.94    0.29
+    #> s(doy)  4   1    0.94    0.32
     par(oldpar)
 
 # TN Analysis
@@ -899,7 +899,7 @@ gam.check(royal_tn_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>          k'  edf k-index p-value
-    #> s(doy) 3.00 1.64    0.93    0.29
+    #> s(doy) 3.00 1.64    0.93    0.26
     par(oldpar)
 
 # N to P ratios

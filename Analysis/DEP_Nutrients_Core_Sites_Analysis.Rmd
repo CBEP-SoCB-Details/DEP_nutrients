@@ -110,7 +110,7 @@ surface_data <- surface_data %>%
 
 ### Add Shorter Site Names
 ```{r add_site_names}
-site_names <- read_csv(file.path(sibling, 'dep_locations.csv')) %>%
+site_names <- read_csv(file.path(sibling, "GIS", 'dep_locations.csv')) %>%
   select(site, short_name)
 surface_data <- surface_data %>%
   left_join(site_names, by = 'site') %>%
@@ -252,7 +252,7 @@ addalpha <- function(colors, alpha=1.0) {
 ```{r ternary_data_quality, fig.width = 5, fig.height = 5}
 pal = addalpha(cbep_colors(), 0.5)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$on_flag | 
@@ -270,7 +270,7 @@ legend('topleft', ncol = 1,
 ```{r ternary_site, fig.width = 5, fig.height = 5}
 pal = viridis(9, alpha=0.5)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$site)])
@@ -290,7 +290,7 @@ device, as we can specify fonts and base font size.
 cairo_pdf('figures/ternary_core.pdf', width = 3.5, height = 5,
           family = 'Montserrat', pointsize = 8)
 
-TernaryPlot(alab = 'Nitrate', blab = 'Ammonium', clab = 'Organic',
+TernaryPlot(alab = 'Nitrate + Nitrite', blab = 'Ammonium', clab = 'Other N',
             grid.lines = 5, grid.minor.lines = 0)
 TernaryPoints(proportion_data[4:6], pch = 16, 
               col = pal[as.numeric(proportion_data$site)])
