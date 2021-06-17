@@ -153,9 +153,9 @@ Haraseeket and the Fore. In 2017, on the Royal and the Cousins.
 We may be able to get broader seasonal and geographic coverage based on FOCB profile sites.
 
 # Analysis Goals and  Considerations 
-There is no simple (one value) summary of profile data to derive and present in 
-State of Casco Bay. Given space constraints, our primary use of these
-data is likely to be as  examples showing vertical profiles in a side bar.  
+There is no simple (one value) summary of profile data to derive and present in
+State of Casco Bay. Given space constraints, our primary use of these data is
+likely to be as examples showing vertical profiles in a side bar.
 
 We thus focus on graphical review of those high frequency sites and years, where
 we can look closely at profiles over the course of the season.
@@ -171,10 +171,6 @@ xt <- xtabs(~ dt + site, data = tmp)
 (preferred_sites <- names(tot[tot > 15]))
 rm(tmp, xt, tot)
 ```
-
-
-
-
 
 We lose little by restricting ourselves to only the regularly sampled sites.
 
@@ -205,8 +201,6 @@ smaller_data %>%
             .groups = 'drop') %>%
   pivot_wider(names_from = year, values_from = n_sampled)
 ```
-
-
 
 # Graphical Review
 ## Seasonal Variation
@@ -255,7 +249,8 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(20,0)))
+          coord_cartesian(ylim = c(20,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2018
@@ -266,7 +261,8 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(20,0)))
+          coord_cartesian(ylim = c(20,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2019
@@ -277,7 +273,8 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2020
@@ -288,21 +285,17 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
-
 What we see is that vertical thermal structure is common, but generally not very
-strong at most sites. Temperatures change by a degree C every couple of meters or so.  This is enough to be meaningful, and slow vertical mixing, but this is not
-evidence of string thermal stratification as occurs in Maine lakes.
+strong at most sites. Temperatures change by a degree C every couple of meters
+or so.  This is enough to be meaningful, and slow vertical mixing, but this is
+not evidence of string thermal stratification as occurs in Maine lakes.
 
-Reverse thermal stratification occurs sometimes on the Presumpscot Estuary 
-sites, presumably because of salinity gradients that stabilize thermal patterns.
-
-
-profile exists 
-EEB18 also shows weak vertical thermal structure of a degree or two
-
+Reverse thermal stratification occurs sometimes on the Presumpscot Estuary, 
+presumably because of salinity gradients that stabilize thermal patterns.
 
 ### Salinity
 ```{r}
@@ -336,7 +329,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2018
@@ -346,7 +340,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2019
@@ -356,7 +351,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2020
@@ -366,7 +362,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 No real surprise. At all sites we see a tendency towards lower salinities in
 the spring and at shallower depths.  But those differences are usually fairly 
@@ -410,7 +407,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                   limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2018
@@ -420,7 +418,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2019
@@ -430,7 +429,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2020
@@ -440,13 +440,12 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 The strongest patterns for oxygen are seasonal. We do see some differentiation 
 with depth at the deeper sites, especially P7CBI, FR09 and PRV70.
-
-
 
 ### Percent Saturation
 ```{r}
@@ -480,7 +479,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                   limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2018
@@ -490,7 +490,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2019
@@ -501,7 +502,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2020
@@ -511,7 +513,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 ### Chlorophyll
@@ -546,7 +549,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                   #limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2018
@@ -556,7 +560,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                  #limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2019
@@ -567,7 +572,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                  #limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2020
@@ -577,7 +583,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                  #limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 A common pattern is a chlorophyll maximum down a couple of meters...
@@ -615,7 +622,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                   #limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2018
@@ -625,7 +633,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                  limits = c(0, 16)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 
@@ -637,7 +646,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                  limits = c(0, 16)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 #### 2020
@@ -647,14 +657,15 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                  limits = c(0, 16)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 Turbidity often tends to be maximum at depth, but differences ar small. 
 Otherwise, it looks like day to day variation is dominant.
 
 # Presumpscort Estuary Series
-It might be worth looking at patterns headed down the Presumpscot Estuary,a s follows:
+It might be worth looking at patterns headed down the Presumpscot Estuary, as follows:
 ```{r}
 presumpscot_transect <- smaller_data %>%
   rename(dates = dt) %>%
@@ -676,7 +687,8 @@ ptdots(.x  = site,  .y  = depth,  .val = salinity, size = 5) +
   scale_color_distiller(palette = 3, direction = 2, 
                                  limits = c(0, 32)
                                   ) +
-          coord_cartesian(ylim = c(10,0))
+  coord_cartesian(ylim = c(10,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm')))
       
 ```
 
@@ -701,7 +713,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, temp)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = temp, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   
   scale_fill_distiller(palette = 7, direction = 2, 
@@ -710,17 +722,20 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = temp,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Salinity(PSU)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Temperature (C)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
   
   geom_point(mapping = aes(sitenum, depth), data= tmp,
-             shape = 21, fill = NA, color = 'gray70', size = 3) +
+             shape = 21, fill = NA, color = 'gray30', size = 3) +
   scale_x_continuous(breaks = 1:5, 
                      labels = c('PRV70', 'PR-17', 'PR-28', 'CBPR', 'P6FGG')) +
   geom_vline(xintercept = 3.05, lty = 2) +
-  geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
+  geom_text(aes(x = 3.2, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```
 
 ### Salinity, September
@@ -733,7 +748,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, salinity)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = salinity, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   scale_fill_distiller(palette = 3, direction = 2, 
                       limits = c(0, 32),
@@ -741,7 +756,9 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = salinity,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Salinity(PSU)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Salinity (PSU)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
 
   geom_point(mapping = aes(sitenum, depth), data= tmp,
              shape = 21, fill = NA, color = 'gray70', size = 3) +
@@ -751,9 +768,9 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = salinity,
   geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```
-
 
 ### Dissolved Oxygen, September
 ```{r}
@@ -763,7 +780,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, do)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = do, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   scale_fill_distiller(palette = 4, direction = 2, 
                         limits = c(6, 9),
@@ -771,17 +788,20 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = do,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Dissolved Oxygen (mg/l)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Dissolved Oxygen (mg/l)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
   
   geom_point(mapping = aes(sitenum, depth), data= tmp,
-             shape = 21, fill = NA, color = 'gray70', size = 3) +
+             shape = 21, fill = NA, color = 'gray30', size = 3) +
   scale_x_continuous(breaks = 1:5, 
                      labels = c('PRV70', 'PR-17', 'PR-28', 'CBPR', 'P6FGG')) +
   geom_vline(xintercept = 3.05, lty = 2) +
   geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```
 
 ### Chlorophyll, September
@@ -792,7 +812,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, chl_a_sonde)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = chl_a_sonde, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   scale_fill_distiller(palette = 5, direction = 2, 
                         #limits = c(6, 9),
@@ -800,15 +820,18 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = chl_a_sonde,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Chlorophyll A (mg/l)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Chlorophyll A (mg/l)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
   
   geom_point(mapping = aes(sitenum, depth), data= tmp,
-             shape = 21, fill = NA, color = 'gray70', size = 3) +
+             shape = 21, fill = NA, color = 'gray30', size = 3) +
   scale_x_continuous(breaks = 1:5, 
                      labels = c('PRV70', 'PR-17', 'PR-28', 'CBPR', 'P6FGG')) +
   geom_vline(xintercept = 3.05, lty = 2) +
   geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```

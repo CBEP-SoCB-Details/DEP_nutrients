@@ -229,8 +229,10 @@ Certain sites had sonde data collected in only one year, while a handful
 of sites had data collected in three, four or five years.
 
 Year 2017 gives has the highest number of sites tracked, with 2016 not
-far behind. However,a t these sites, data was often only collected a few
-times, making seasonal analysis problematic.
+far behind. However,at these sites, data was often only collected a few
+times, making seasonal analysis problematic. In 2016, DEP samples
+focused on the Haraseeket and the Fore. In 2017, on the Royal and the
+Cousins.
 
 We may be able to get broader seasonal and geographic coverage based on
 FOCB profile sites.
@@ -363,7 +365,8 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(20,0)))
+          coord_cartesian(ylim = c(20,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-11-9.png" style="display: block; margin: auto;" />
@@ -377,7 +380,8 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(20,0)))
+          coord_cartesian(ylim = c(20,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-12-9.png" style="display: block; margin: auto;" />
@@ -391,7 +395,8 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-13-9.png" style="display: block; margin: auto;" />
@@ -405,7 +410,8 @@ for (s in seq_along(nested$site))
                         limits = c(10, 25),
                         na.value = 'gray95',
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-14-9.png" style="display: block; margin: auto;" />
@@ -417,11 +423,8 @@ vertical mixing, but this is not evidence of string thermal
 stratification as occurs in Maine lakes.
 
 Reverse thermal stratification occurs sometimes on the Presumpscot
-Estuary sites, presumably because of salinity gradients that stabilize
-thermal patterns.
-
-profile exists EEB18 also shows weak vertical thermal structure of a
-degree or two
+Estuary, presumably because of salinity gradients that stabilize thermal
+patterns.
 
 ### Salinity
 
@@ -457,7 +460,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-16-9.png" style="display: block; margin: auto;" />
@@ -470,7 +474,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-17-9.png" style="display: block; margin: auto;" />
@@ -483,7 +488,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-18-9.png" style="display: block; margin: auto;" />
@@ -496,7 +502,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 3, direction = 2, 
                                  # limits = c(10, 32)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-9.png" style="display: block; margin: auto;" />
@@ -543,7 +550,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                   limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-21-9.png" style="display: block; margin: auto;" />
@@ -556,7 +564,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-22-9.png" style="display: block; margin: auto;" />
@@ -569,7 +578,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-23-9.png" style="display: block; margin: auto;" />
@@ -582,7 +592,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(6, 12)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-24-9.png" style="display: block; margin: auto;" />
@@ -625,7 +636,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                   limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-26-9.png" style="display: block; margin: auto;" />
@@ -638,7 +650,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-27-9.png" style="display: block; margin: auto;" />
@@ -653,7 +666,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-28-9.png" style="display: block; margin: auto;" />
@@ -666,7 +680,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 4, direction = 2, 
                                  limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-29-9.png" style="display: block; margin: auto;" />
@@ -705,7 +720,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                   #limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-31-9.png" style="display: block; margin: auto;" />
@@ -718,7 +734,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                  #limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-32-9.png" style="display: block; margin: auto;" />
@@ -733,7 +750,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                  #limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-33-9.png" style="display: block; margin: auto;" />
@@ -746,7 +764,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 5, direction = 2, 
                                  #limits = c(80, 125)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-9.png" style="display: block; margin: auto;" />
@@ -787,7 +806,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                   #limits = c(90, 135)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-36-9.png" style="display: block; margin: auto;" />
@@ -800,7 +820,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                  limits = c(0, 16)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-37-9.png" style="display: block; margin: auto;" />
@@ -815,7 +836,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                  limits = c(0, 16)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-38-9.png" style="display: block; margin: auto;" />
@@ -828,7 +850,8 @@ for (s in seq_along(nested$site))
             scale_color_distiller(palette = 6, direction = 2, 
                                  limits = c(0, 16)
                                   ) +
-          coord_cartesian(ylim = c(22,0)))
+          coord_cartesian(ylim = c(22,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm'))))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-39-9.png" style="display: block; margin: auto;" />
@@ -839,7 +862,7 @@ Otherwise, it looks like day to day variation is dominant.
 # Presumpscort Estuary Series
 
 It might be worth looking at patterns headed down the Presumpscot
-Estuary,a s follows:
+Estuary, as follows:
 
 ``` r
 presumpscot_transect <- smaller_data %>%
@@ -864,7 +887,8 @@ ptdots(.x  = site,  .y  = depth,  .val = salinity, size = 5) +
   scale_color_distiller(palette = 3, direction = 2, 
                                  limits = c(0, 32)
                                   ) +
-          coord_cartesian(ylim = c(10,0))
+  coord_cartesian(ylim = c(10,0)) +
+          guides(color = guide_colorbar(barwidth = unit(0.25, 'cm')))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-41-1.png" style="display: block; margin: auto;" />
@@ -892,7 +916,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, temp)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = temp, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   
   scale_fill_distiller(palette = 7, direction = 2, 
@@ -901,17 +925,20 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = temp,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Salinity(PSU)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Temperature (C)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
   
   geom_point(mapping = aes(sitenum, depth), data= tmp,
-             shape = 21, fill = NA, color = 'gray70', size = 3) +
+             shape = 21, fill = NA, color = 'gray30', size = 3) +
   scale_x_continuous(breaks = 1:5, 
                      labels = c('PRV70', 'PR-17', 'PR-28', 'CBPR', 'P6FGG')) +
   geom_vline(xintercept = 3.05, lty = 2) +
-  geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
+  geom_text(aes(x = 3.2, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-43-1.png" style="display: block; margin: auto;" />
@@ -928,7 +955,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, salinity)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = salinity, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   scale_fill_distiller(palette = 3, direction = 2, 
                       limits = c(0, 32),
@@ -936,7 +963,9 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = salinity,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Salinity(PSU)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Salinity (PSU)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
 
   geom_point(mapping = aes(sitenum, depth), data= tmp,
              shape = 21, fill = NA, color = 'gray70', size = 3) +
@@ -946,7 +975,8 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = salinity,
   geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-44-1.png" style="display: block; margin: auto;" />
@@ -960,7 +990,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, do)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = do, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   scale_fill_distiller(palette = 4, direction = 2, 
                         limits = c(6, 9),
@@ -968,17 +998,20 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = do,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Dissolved Oxygen (mg/l)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Dissolved Oxygen (mg/l)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
   
   geom_point(mapping = aes(sitenum, depth), data= tmp,
-             shape = 21, fill = NA, color = 'gray70', size = 3) +
+             shape = 21, fill = NA, color = 'gray30', size = 3) +
   scale_x_continuous(breaks = 1:5, 
                      labels = c('PRV70', 'PR-17', 'PR-28', 'CBPR', 'P6FGG')) +
   geom_vline(xintercept = 3.05, lty = 2) +
   geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-45-1.png" style="display: block; margin: auto;" />
@@ -992,7 +1025,7 @@ tmp <- presumpscot_transect %>%
   select(site, sitenum,depth, chl_a_sonde)
 
 ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = chl_a_sonde, 
-         .res_x = 0.25, .res_y = .25,
+         .res_x = 0.01, .res_y = .1,
          y_grow_grid = FALSE, y_with_zero = FALSE) +
   scale_fill_distiller(palette = 5, direction = 2, 
                         #limits = c(6, 9),
@@ -1000,17 +1033,20 @@ ptsmooth(tmp, .x  = sitenum,  .y  = depth,  .val = chl_a_sonde,
                                   ) +
   theme_cbep(base_size = 12) +
   theme(legend.position = 'bottom') +
-  guides(fill = guide_legend(title = 'Chlorophyll A (mg/l)', title.position = 'top')) +
+  guides(fill = guide_colorbar(title = 'Chlorophyll A (mg/l)', 
+                               title.position = 'top',
+                               barheight = unit(0.2, 'cm'))) +
   
   geom_point(mapping = aes(sitenum, depth), data= tmp,
-             shape = 21, fill = NA, color = 'gray70', size = 3) +
+             shape = 21, fill = NA, color = 'gray30', size = 3) +
   scale_x_continuous(breaks = 1:5, 
                      labels = c('PRV70', 'PR-17', 'PR-28', 'CBPR', 'P6FGG')) +
   geom_vline(xintercept = 3.05, lty = 2) +
   geom_text(aes(x = 3.25, y = 7, label = "Martin's Point Bridge"), 
             angle = 90, size = 3, hjust = 0) +
   xlab('Site') +
-  ylab('Depth (m)')
+  ylab('Depth (m)') +
+  ggtitle('September 2018')
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-46-1.png" style="display: block; margin: auto;" />
