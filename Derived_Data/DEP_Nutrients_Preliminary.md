@@ -556,7 +556,7 @@ Turbidity includes both E codes and U codes.
 
 #### “E” codes
 
-The E codes are signals for powers of ten, and wil lbe interpreted
+The E codes are signals for powers of ten, and will be interpreted
 correctly by `as.numeric()`, so we need not worry about them.
 
 ``` r
@@ -598,7 +598,7 @@ tmp %>%
 #> 3 U<0.01
 ```
 
-That’s only three left censored values out of all turbidity values. The
+That’s only three left censored values out of all turbidity values. Tdhe
 frequency is so low that our handling of these values can not matter to
 our analysis.
 
