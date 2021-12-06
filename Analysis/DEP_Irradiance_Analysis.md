@@ -49,7 +49,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 
 # Introduction
 
-THis notebook focuses on analysis of spatial and tempora lpatterns in
+This notebook focuses on analysis of spatial and temporal patterns in
 light attenuation coefficients (k) calculated from Maine DEP irradiance
 data Calculation of Light Attenuation Coefficients (k values), and
 analysis of spatial and temporal patterns in light attenuation based on
@@ -254,7 +254,7 @@ ggplot(k_data, aes(k_est, k_se, color = k_n)) +
 <img src="DEP_Irradiance_Analysis_files/figure-gfm/error_scales_with_estimate-1.png" style="display: block; margin: auto;" />
 There is a strong location-scale relationship. We have tighter estimates
 of k from sites and dates with low k conditions, while precision is much
-lower for sites with high k. THis presumably reflects either
+lower for sites with high k. This presumably reflects either
 non-linearities in light extinction, or just higher variance in light
 measurements at lower light (higher k).
 
@@ -475,7 +475,7 @@ par(oldpar)
 ```
 
 Model diagnostics are not great, although they are slightly better when
-based only on the sites with substantial data. But both teh all sites
+based only on the sites with substantial data. But all sites
 and preferred sites models show strong location-scale patterns.
 
 ### Weighted Models
@@ -947,7 +947,7 @@ but does not do as well at large values. 5. Models with and without a
 Day of the Year term generate similar qualitative results. 5. We have a
 remaining location-scale relationship, which makes these models somewhat
 suspect for estimating standard errors. There is little we can do with a
-conventioanl linear model to address that.
+conventional linear model to address that.
 
 ### Hierarchical Model
 
@@ -1120,7 +1120,7 @@ relatively low impact on predictions. The primary value of these models
 will be in estimating standard errors in ways that allow us to lean on
 data from sites with more data to help constrain variability at sites
 where we lack data. The best way to look at that will be through very
-simple hierarchical models, that treat year as a random variable.
+simple hierarchical models that treat year as a random variable.
 
 ## Point Chart Based on Observed Means
 
