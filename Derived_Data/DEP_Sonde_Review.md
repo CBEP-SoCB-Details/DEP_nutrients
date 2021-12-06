@@ -97,7 +97,7 @@ the data to avoid confusion.
 ## Censoring Flags
 
 While preparing our working data, we separated raw observations from
-text annotations, including data quality flags. IN the sonde-related
+text annotations, including data quality flags. In the sonde-related
 data, we only had to contend with (1) left censoring of turbidity data ,
 and (2) data quality flags on all chlorophyll data.
 
@@ -380,7 +380,7 @@ xtabs(~ dpth_clss + site, data = tmp)
 rm(tmp)
 ```
 
-Do, most sonde data appears to be downcast data, with data collected at
+Most sonde data appears to be downcast data, with data collected at
 (or near) specific depths. It looks like there has been inconsistency of
 handling shallow water samples. Some sites shallow samples may have been
 used to estomate Kd
