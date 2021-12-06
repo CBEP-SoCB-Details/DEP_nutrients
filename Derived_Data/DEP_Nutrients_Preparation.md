@@ -105,7 +105,7 @@ consistent data files. These include:
 
 5.  “dep\_locations.csv”: Geographic data , aligning site codes and site
     names with latitudes and longitudes. This data set was used to
-    generate a GIS data layer, subsequently used to map selectred of
+    generate a GIS data layer, subsequently used to map selected of
     results of analyses.
 
 This notebook provides complete documentation regarding what data was
