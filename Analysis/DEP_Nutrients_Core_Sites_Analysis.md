@@ -50,7 +50,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 # Introduction
 
 This R Notebook focuses on analysis of patterns in nutrients
-concentrations, especially total nitrogen, froma small number of “core”
+concentrations, especially total nitrogen, from a small number of “core”
 locations sampled by Maine DEP regularly in 2018, 2019, and 2020. These
 sites are all found close to Portland, Maine.
 
@@ -262,7 +262,7 @@ naming convention, with the variable name followed by an underscore and
 We also had a few “U”, “U&lt;” and “&gt;” flags. These represent
 censored values, either right censored ( “&gt;”) for Secchi depth, or
 left censored for other parameters. Again, we separated out a `TRUE` /
-`FALSE` flag to indicated censored values. These flags also follow a
+`FALSE` flag to indicate censored values. These flags also follow a
 consistent naming convention, with the variable name followed by an
 underscore and “cens”.
 
@@ -811,7 +811,7 @@ emmeans(core_din_gam, 'site', cov.keep = 'doy', type = 'response')
 #>  PRV70   0.1679 0.01811 149   0.1357   0.2078
 #>  PR-17   0.1432 0.01547 149   0.1157   0.1773
 #> 
-#> Results are averaged over the levels of: doy, yearf 
+#> Results are averaged over the levels of: day, year
 #> Confidence level used: 0.95 
 #> Intervals are back-transformed from the log scale
 ```
@@ -1292,7 +1292,7 @@ It’s clear there is a seasonal pattern in N to P ratios.
 
 ### GAM Model
 
-We are not fitting a year random effect here , because we have data from
+We are not fitting a year random effect here, because we have data from
 only two years, and no reason to expect N:P ratios the vary
 systematically by year.
 
