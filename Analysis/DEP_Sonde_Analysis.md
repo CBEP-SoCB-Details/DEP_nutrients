@@ -56,7 +56,7 @@ data, looking at
     estuary to out past the mouth of Portland Harbor.
 
 We make use of a small (still draft) graphics package we produced,
-`tdggraph`, that encapsulates some fo the logic needed to generate time
+`tdggraph`, that encapsulates some for the logic needed to generate time
 by depth graphics succinctly.
 
 \#Load libraries
@@ -138,7 +138,7 @@ the data to avoid confusion.
 ## Censoring Flags
 
 While preparing our working data, we separated raw observations from
-text annotations, including data quality flags. IN the sonde-related
+text annotations, including data quality flags. In the sonde-related
 data, we only had to contend with (1) left censoring of turbidity data ,
 and (2) data quality flags on all chlorophyll data.
 
@@ -147,7 +147,7 @@ accuracy (with “J” flags), it does us no good to track that information
 during further analysis. We retain all data, but recognize that it’s
 accuracy is suspect, especially in comparison to laboratory results. We
 believe the “J” flags reflect the fact that these are “raw” estimates of
-chlorophyll based only on observed florescence, never recalibarated
+chlorophyll based only on observed fluorescence, never recalibrated
 based on laboratory samples.
 
 We also had a few “U&lt;” flags in the Turbidity data. We separated out
@@ -181,7 +181,7 @@ here.
 # Review of Sonde Data
 
 Judging only by site codes, there may be some data overlap with the FOCB
-“profile” site downcast data. We have not s double checked that yet.
+“profile” site downcast data. We have not double checked that yet.
 
 ## How often was each site sampled?
 
@@ -770,7 +770,7 @@ for (s in seq_along(nested$site))
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-9.png" style="display: block; margin: auto;" />
 
-A common pattern is a chlorophyll maximum down a couple of meters…
+A common pattern is a chlorophyll maximum down a couple of meters.
 
 ### Turbidity
 
