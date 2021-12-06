@@ -263,7 +263,7 @@ naming convention, with the variable name followed by an underscore and
 We also had a few “U”, “U&lt;” and “&gt;” flags. These represent
 censored values, either right censored ( “&gt;”) for Secchi depth, or
 left censored for other parameters. Again, we separated out a `TRUE` /
-`FALSE` flag to indicated censored values. These flags also follow a
+`FALSE` flag to indicate censored values. These flags also follow a
 consistent naming convention, with the variable name followed by an
 underscore and “cens”.
 
@@ -437,7 +437,7 @@ So, we see that most samples on the Royal have low ammonium, with
 variable levels of NOx versus organic N. The sites with the highest
 proportion of NOx tend to be from the upper tributaries / head of tide.
 High TN samples may be slightly more likely to have extreme proportions,
-but hey do not fall in any particular area of the plot.
+but they do not fall in any particular area of the plot.
 
 ## Produce PDF
 
@@ -799,7 +799,7 @@ summary(royal_tn_lm)
 ```
 
 So the month of July had higher than expected TN, and that is unlikely
-to be solely do to chance (if we view each Site as independent, which in
+to be solely due to chance (if we view each Site as independent, which in
 this setting, we do not). We have too little data to conclude that there
 is a meaningful seasonal pattern. All we know is “July is high” which
 may reflect the year’s peculiar weather or something. We proceed with a
@@ -850,7 +850,7 @@ plot(royal_tn_lm_red)
 par(oldpar)
 ```
 
-Those look excellent, except for he possible scale-location pattern.
+Those look excellent, except for the possible scale-location pattern.
 However, since that pattern reflects discrete site predictions, it
 likely only reflects low variability at one site – for unknown reasons.
 
@@ -1033,7 +1033,7 @@ There is a possibility of a seasonal pattern here.
 # Chlorophyll and Phaeophytin
 
 This data does not include all chlorophyll data, because of ambiguities
-of labeling in the source data.See “DEP\_Nutrients\_Preparation.Rmd” for
+of labeling in the source data. See “DEP\_Nutrients\_Preparation.Rmd” for
 details.
 
 ``` r
@@ -1219,4 +1219,4 @@ tmp %>%
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/chl_nutrients_pairs-1.png" style="display: block; margin: auto;" />
 
 Interestingly, The strongest correlation between chlorophyll and
-nutrients is with TP, not TN….
+nutrients is with TP, not TN.
