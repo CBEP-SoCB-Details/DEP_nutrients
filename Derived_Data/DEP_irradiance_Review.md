@@ -123,7 +123,7 @@ irr_data <- read_csv(file.path('dep_irradiance_data.csv')) %>%
 
 ## QA/QC Samples
 
-We conducted no analysis of QA/QC samples, and simply deleted then from
+We conducted no analysis of QA/QC samples, and simply deleted them from
 the data to avoid confusion.
 
 ## Censoring Flags
