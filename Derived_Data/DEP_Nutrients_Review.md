@@ -159,7 +159,7 @@ We are interested in figuring out what data occurs with other data. A
 giant `xtab()` is possible, but unwieldy for more than three variables.
 
 We instead reducing all VARIABLES to the value 1 if data exists, and
-zero otherwise. We then looking at correlations between data categories
+zero otherwise. We then look at correlations between data categories,
 
 ``` r
 tmp <- dep_data %>%
@@ -200,7 +200,7 @@ tmp <- dep_data %>%
 #>   (5,20]  26   0   0    9
 ```
 
-So overall, it looks like the depth designations ar ALMOST consistent.
+So overall, it looks like the depth designations are ALMOST consistent.
 There are nine samples that lack a depth designation that were collected
 at depth. These are likely to be bottom samples, as all have depth
 reported as over 10 meters. We treat them as such here, and give them
@@ -565,7 +565,7 @@ ggplot(surface_data, aes(tp)) +
 ```
 
 <img src="DEP_Nutrients_Review_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
-So very little of the data is censored….
+So very little of the data is censored.
 
 ## N to P ratios
 
@@ -761,7 +761,7 @@ tmp %>%
 <img src="DEP_Nutrients_Review_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 Interestingly, The strongest correlation between chlorophyll and
-nutrients is with TP, not TN…. Phaeophytin is correlated with Total N
+nutrients is with TP, not TN. Phaeophytin is correlated with Total N
 and organic N as well. Total suspended solids is correlated with most
 metrics, suggesting it is functioning here a surrogate for plankton
 abundance, which will be correlated with everything.
