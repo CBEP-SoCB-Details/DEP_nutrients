@@ -484,7 +484,7 @@ royal_data <- surface_data %>%
 
 ## Antoine Creek Data Subset from 2015
 
-Antoine Creek only has NOx data, but we retain it anyway….
+Antoine Creek only has NOx data, but we retain it anyway.
 
 ``` r
 antoine_sites <- levels(factor(surface_data$site))
