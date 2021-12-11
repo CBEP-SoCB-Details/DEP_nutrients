@@ -46,9 +46,9 @@ $$
 log(\\frac{I\_d}{I\_0}) = -kz
 $$
 
-Note that this produces a value of k at each depth If we assume theory
-is accurate and light attenuation is vertically uniform, we can average
-across depths. to improve accuracy.
+Note that this produces a value of k at each depth. If we assume this
+theory is accurate and light attenuation is vertically uniform, we can
+average across depths to improve accuracy.
 
 $$ k = \\frac{1}{-z} \\times log(\\frac{I\_d}{I\_0}) $$
 
@@ -73,10 +73,11 @@ a linear model.
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -102,28 +103,23 @@ theme_set(theme_cbep())
 ``` r
 irr_data <- read_csv(file.path('dep_irradiance_data.csv')) %>%
               rename(sample_date = dt)
-#> 
+#> Rows: 2851 Columns: 11
 #> -- Column specification --------------------------------------------------------
-#> cols(
-#>   site_name = col_character(),
-#>   site = col_character(),
-#>   dt = col_date(format = ""),
-#>   month = col_character(),
-#>   year = col_double(),
-#>   time = col_time(format = ""),
-#>   hour = col_double(),
-#>   depth = col_double(),
-#>   irr_air = col_double(),
-#>   irr_water = col_double(),
-#>   irr_pct = col_double()
-#> )
+#> Delimiter: ","
+#> chr  (3): site_name, site, month
+#> dbl  (6): year, hour, depth, irr_air, irr_water, irr_pct
+#> date (1): dt
+#> time (1): time
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 # Summary of Metadata
 
 ## QA/QC Samples
 
-We conducted no analysis of QA/QC samples, and simply deleted then from
+We conducted no analysis of QA/QC samples, and simply deleted them from
 the data to avoid confusion.
 
 ## Censoring Flags

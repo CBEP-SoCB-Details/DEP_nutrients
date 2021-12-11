@@ -21,11 +21,9 @@ knitr::opts_chunk$set(fig.align = 'center',
 
 #Load libraries
 ```{r}
-#library(readxl)
 library(tidyverse)
 
 library(GGally)
-#library(mgcv)
 
 library(CBEPgraphics)
 load_cbep_fonts()
@@ -66,7 +64,6 @@ sonde_data <- sonde_data %>%
                  NA_real_, temp))
 ```
 
-
 # Summary of Metadata
 ## QA/QC Samples
 We conducted no analysis of QA/QC samples, and simply deleted then from the data
@@ -74,7 +71,7 @@ to avoid confusion.
 
 ## Censoring Flags
 While preparing our working data, we separated raw observations from text
-annotations, including data quality flags.  IN the sonde-related data, we only
+annotations, including data quality flags.  In the sonde-related data, we only
 had to contend with (1) left censoring of turbidity data , and (2) data quality 
 flags on all chlorophyll data.
 
@@ -83,7 +80,7 @@ accuracy (with "J" flags), it does us no good to track that information during
 further analysis.  We retain all data, but recognize that it's accuracy is 
 suspect, especially in comparison to laboratory results. We believe the 
 "J" flags reflect the fact that these are "raw" estimates of chlorophyll based
-only on observed florescence, never recalibarated based on laboratory samples.
+only on observed florescence, never recalibrated based on laboratory samples.
 
 We also had a few "U<"  flags in the Turbidity data.  We separated out a 
 `TRUE` / `FALSE` flag to indicated censored values, with the name 
@@ -111,7 +108,6 @@ do        | Dissolved Oxygen             | MG/L                  |
 turbidity | Turbidity                    | NTU                   |
 chl_a_sonde |Chlorophyll A, measured with a sonde | UG/L          |
 
-
 # Review of Sonde Data
 ## Scatterplot Matrix (Pairs Plot)
 ```{r fig.width = 7, fig.height = 7 }
@@ -119,6 +115,7 @@ tmp <- sonde_data %>%
   select(depth:turbidity)
 ggpairs(log(tmp), progress = FALSE)
 ```
+
 Many of the low turbidity values are at NTU = 0.001, but they are not flagged as 
 censored observations.  We suspect but can not document that these are minimum
 possible values on the sensor, and thus may be functionally censored values.
@@ -134,12 +131,14 @@ xtabs(~ dpth_clss + site, data = tmp)
 rm(tmp)
 ```
 
-Do, most sonde data appears to be downcast data, with data collected at (or
+Most sonde data appears to be downcast data, with data collected at (or
 near) specific depths.  It looks like there has been inconsistency of handling 
-shallow water samples.  Some sites shallow samples may have been used to estomate Kd
+shallow water samples.  Some sites shallow samples may have been used to 
+estimate K~d~.
 
 ## How often was each site sampled?
 We make an assumption here that sampling on one day is all related.
+
 ```{r}
 tmp <- sonde_data %>%
   group_by(site, sample_date) %>%
@@ -157,8 +156,8 @@ Most of those are FOCB "profile" Sites, so it is likely there is some data
 overlap with the FOCB downcast data.
 
 We can emphasize data from selected sites, which may clarify what is going on.
-WE chose first to process data from sites withat least 29 sampling dates.
-lets look at site "FR)9"
+WeE chose first to process data from sites with at least 29 sampling dates.
+lets look at site "FR09"
 
 ```{r}
 sonde_data %>%
@@ -185,7 +184,3 @@ ggplot(aes(sample_date, depth, color = temp, size = do)) +
 
 To create a more typical depth-time plot we need to create data with equally 
 spaced (interpolated) values. That is beyond our current scope.
-
-
-
-

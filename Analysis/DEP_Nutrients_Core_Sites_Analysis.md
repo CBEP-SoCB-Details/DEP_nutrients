@@ -35,6 +35,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
         -   [Linear Models](#linear-models-1)
         -   [GAM Model](#gam-model-1)
 -   [N to P Ratios](#n-to-p-ratios)
+    -   [Histograms / Distributions](#histograms--distributions-2)
     -   [Descriptive Statistics](#descriptive-statistics-1)
     -   [Draft Graphic](#draft-graphic-2)
     -   [GAM Model](#gam-model-2)
@@ -50,7 +51,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 # Introduction
 
 This R Notebook focuses on analysis of patterns in nutrients
-concentrations, especially total nitrogen, froma small number of “core”
+concentrations, especially total nitrogen, from a small number of “core”
 locations sampled by Maine DEP regularly in 2018, 2019, and 2020. These
 sites are all found close to Portland, Maine.
 
@@ -68,10 +69,11 @@ All data is relatively recent, so we do not attempt any trend analysis.
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -89,14 +91,16 @@ library(GGally)
 #>   method from   
 #>   +.gg   ggplot2
 library(mgcv)
+#> Warning: package 'mgcv' was built under R version 4.0.5
 #> Loading required package: nlme
 #> 
 #> Attaching package: 'nlme'
 #> The following object is masked from 'package:dplyr':
 #> 
 #>     collapse
-#> This is mgcv 1.8-36. For overview type 'help("mgcv-package")'.
+#> This is mgcv 1.8-38. For overview type 'help("mgcv-package")'.
 library(emmeans)
+#> Warning: package 'emmeans' was built under R version 4.0.5
 #> 
 #> Attaching package: 'emmeans'
 #> The following object is masked from 'package:GGally':
@@ -178,15 +182,14 @@ surface_data <- surface_data %>%
 ``` r
 site_names <- read_csv(file.path(sibling, "GIS", 'dep_locations.csv')) %>%
   select(site, short_name)
-#> 
+#> Rows: 44 Columns: 5
 #> -- Column specification --------------------------------------------------------
-#> cols(
-#>   site_name = col_character(),
-#>   short_name = col_character(),
-#>   site = col_character(),
-#>   Latitude = col_double(),
-#>   Longitude = col_double()
-#> )
+#> Delimiter: ","
+#> chr (3): site_name, short_name, site
+#> dbl (2): Latitude, Longitude
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 surface_data <- surface_data %>%
   left_join(site_names, by = 'site') %>%
   relocate(short_name, .after = site)
@@ -262,7 +265,7 @@ naming convention, with the variable name followed by an underscore and
 We also had a few “U”, “U&lt;” and “&gt;” flags. These represent
 censored values, either right censored ( “&gt;”) for Secchi depth, or
 left censored for other parameters. Again, we separated out a `TRUE` /
-`FALSE` flag to indicated censored values. These flags also follow a
+`FALSE` flag to indicate censored values. These flags also follow a
 consistent naming convention, with the variable name followed by an
 underscore and “cens”.
 
@@ -651,6 +654,7 @@ plot(core_din_emms_lm) + coord_flip() +
 ```
 
 <img src="DEP_Nutrients_Core_Sites_Analysis_files/figure-gfm/plot_din_marginals-1.png" style="display: block; margin: auto;" />
+
 Differences between model predictions and observed means are almost
 entirely because the model is predicting geometric, not arithmetic
 means. The model’s adjusted geometric means line up well with observed
@@ -1022,6 +1026,7 @@ plot(core_tn_emms_lm) + coord_flip() +
 ```
 
 <img src="DEP_Nutrients_Core_Sites_Analysis_files/figure-gfm/plot_tn_marginals-1.png" style="display: block; margin: auto;" />
+
 The linear model does an excellent job of returning the observed
 geometric means.
 
@@ -1044,6 +1049,7 @@ ggplot(compare, aes(tn_mn, response)) +
 ```
 
 <img src="DEP_Nutrients_Core_Sites_Analysis_files/figure-gfm/compare_tn_lm_observed-1.png" style="display: block; margin: auto;" />
+
 So, this model fits values slightly below observed values, as expected
 for geometric means of skewed data, which are slightly lower than
 arithmetic means.
@@ -1109,9 +1115,9 @@ gam.check(core_tn_gam)
     #> Basis dimension (k) checking results. Low p-value (k-index<1) may
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
-    #>                k'      edf k-index p-value    
-    #> s(doy)   3.00e+00 2.17e+00    0.78  <2e-16 ***
-    #> s(yearf) 3.00e+00 1.57e-09      NA      NA    
+    #>                k'      edf k-index p-value   
+    #> s(doy)   3.00e+00 2.17e+00    0.78   0.005 **
+    #> s(yearf) 3.00e+00 1.57e-09      NA      NA   
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     par(oldpar)
@@ -1212,6 +1218,7 @@ ggplot(compare, aes(tn_mn, response)) +
 ```
 
 <img src="DEP_Nutrients_Core_Sites_Analysis_files/figure-gfm/compare_tn_gam_observed-1.png" style="display: block; margin: auto;" />
+
 Here the lower values from the GAM model are because we are implicitly
 comparing estimated geometric means to arithmetic means.
 
@@ -1219,7 +1226,9 @@ comparing estimated geometric means to arithmetic means.
 
 Generally, our N:P ratios are well below 15, suggesting continued N
 limitation. Is that worth reporting on? There may be N:P ratio variation
-between sites. \#\#\# Histograms / Distributions
+between sites.
+
+### Histograms / Distributions
 
 ``` r
 core_data <- core_data %>%
@@ -1292,7 +1301,7 @@ It’s clear there is a seasonal pattern in N to P ratios.
 
 ### GAM Model
 
-We are not fitting a year random effect here , because we have data from
+We are not fitting a year random effect here, because we have data from
 only two years, and no reason to expect N:P ratios the vary
 systematically by year.
 
@@ -1341,7 +1350,7 @@ gam.check(core_n2p_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>          k'  edf k-index p-value  
-    #> s(doy) 3.00 1.81    0.83    0.03 *
+    #> s(doy) 3.00 1.81    0.83   0.025 *
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     par(oldpar)
@@ -1405,6 +1414,7 @@ plot(core_n2p_emms_gam) + coord_flip() +
 ```
 
 <img src="DEP_Nutrients_Core_Sites_Analysis_files/figure-gfm/plot_n2p_gam_marginals-1.png" style="display: block; margin: auto;" />
+
 The sites show statistically significant differences as a group, but
 with those large error bands, most pairwise comparisons will not be
 significant.
@@ -1415,6 +1425,7 @@ plot(core_n2p_emms_gam_doy) + coord_flip() +
 ```
 
 <img src="DEP_Nutrients_Core_Sites_Analysis_files/figure-gfm/plot_n2p_gam_marginals_doy-1.png" style="display: block; margin: auto;" />
+
 On the other hand, the is a strong N to p ratio pattern. Since there is
 only a little seasonal pattern in the N values, the P values must climb
 seasonally.
@@ -1431,6 +1442,7 @@ ggplot(core_data, aes(tp)) +
 ```
 
 <img src="DEP_Nutrients_Core_Sites_Analysis_files/figure-gfm/tp_histogram-1.png" style="display: block; margin: auto;" />
+
 So very little of the data is censored….
 
 ``` r

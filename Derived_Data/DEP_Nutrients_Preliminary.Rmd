@@ -268,7 +268,7 @@ In some cases these may be combined.
 Turbidity includes both E codes and U codes.
 
 #### "E" codes
-The E codes are signals for powers of ten, and wil lbe interpreted correctly
+The E codes are signals for powers of ten, and will be interpreted correctly
 by `as.numeric()`, so we need not worry about them.
 ```{r}
 tmp %>%

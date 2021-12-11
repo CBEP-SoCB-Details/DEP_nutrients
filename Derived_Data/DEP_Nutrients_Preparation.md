@@ -51,10 +51,11 @@ library(readxl)
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -105,7 +106,7 @@ consistent data files. These include:
 
 5.  “dep\_locations.csv”: Geographic data , aligning site codes and site
     names with latitudes and longitudes. This data set was used to
-    generate a GIS data layer, subsequently used to map selectred of
+    generate a GIS data layer, subsequently used to map selected of
     results of analyses.
 
 This notebook provides complete documentation regarding what data was
@@ -234,9 +235,7 @@ dep_data %>%
 #> #   salinity <chr>, ph <dbl>, pctsat <chr>, do <chr>, turbidity <chr>,
 #> #   chl_a_sonde <chr>, chl_a <chr>, chl_less_phaeo <chr>, phaeo <chr>,
 #> #   nox_n <chr>, nh4_n <chr>, tkn <chr>, tn <chr>, op_p <chr>, tp <chr>,
-#> #   tss <chr>, secchi <chr>, irr_air <dbl>, irr_water <dbl>, irr_pct <dbl>,
-#> #   Sample Comments <chr>, Validation Comments <chr>, Latitude <dbl>,
-#> #   Longitude <dbl>
+#> #   tss <chr>, secchi <chr>, irr_air <dbl>, irr_water <dbl>, irr_pct <dbl>, ...
 ```
 
 # Delete Data QC Samples

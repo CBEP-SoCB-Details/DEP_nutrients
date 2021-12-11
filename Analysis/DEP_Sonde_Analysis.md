@@ -47,17 +47,18 @@ presented largely in graphical form. Formal statistical analyses are of
 less interest, as we expect variation by depth, time, and location.
 Unexplained variation is also fairly common.
 
-Her we focus on producing graphical summaries of the DEP sonde downcast
-data, looking at
+Here we focus on producing graphical summaries of the DEP sonde downcast
+data, looking at:
 
 1.  Variation by time of year for each site and year, and
 
 2.  Patterns along a spatial transect from the head of the Presumpscot
     estuary to out past the mouth of Portland Harbor.
 
-We make use of a small (still draft) graphics package we produced,
-`tdggraph`, that encapsulates some fo the logic needed to generate time
-by depth graphics succinctly.
+We make use of a small graphics package we produced, `tdggraph`, that
+encapsulates some of the logic needed to generate time by depth graphics
+succinctly. That package is available
+[here](https://github.com/CBEEP-SoCB/tdggraph).
 
 \#Load libraries
 
@@ -66,10 +67,11 @@ by depth graphics succinctly.
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -106,26 +108,17 @@ sibling <- paste(parent,sibfldnm, sep = '/')
 ``` r
 sonde_data <- read_csv(file.path(sibling, 'dep_sonde_data.csv')) %>%
   mutate(yearf = factor(year))
-#> 
+#> Rows: 2679 Columns: 16
 #> -- Column specification --------------------------------------------------------
-#> cols(
-#>   site_name = col_character(),
-#>   site = col_character(),
-#>   dt = col_date(format = ""),
-#>   month = col_character(),
-#>   year = col_double(),
-#>   time = col_time(format = ""),
-#>   hour = col_double(),
-#>   depth = col_double(),
-#>   temp = col_double(),
-#>   salinity = col_double(),
-#>   ph = col_double(),
-#>   pctsat = col_double(),
-#>   do = col_double(),
-#>   chl_a_sonde = col_double(),
-#>   turbidity = col_double(),
-#>   turbidity_cens = col_logical()
-#> )
+#> Delimiter: ","
+#> chr   (3): site_name, site, month
+#> dbl  (10): year, hour, depth, temp, salinity, ph, pctsat, do, chl_a_sonde, t...
+#> lgl   (1): turbidity_cens
+#> date  (1): dt
+#> time  (1): time
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 # Summary of Metadata
@@ -138,7 +131,7 @@ the data to avoid confusion.
 ## Censoring Flags
 
 While preparing our working data, we separated raw observations from
-text annotations, including data quality flags. IN the sonde-related
+text annotations, including data quality flags. In the sonde-related
 data, we only had to contend with (1) left censoring of turbidity data ,
 and (2) data quality flags on all chlorophyll data.
 
@@ -147,7 +140,7 @@ accuracy (with “J” flags), it does us no good to track that information
 during further analysis. We retain all data, but recognize that it’s
 accuracy is suspect, especially in comparison to laboratory results. We
 believe the “J” flags reflect the fact that these are “raw” estimates of
-chlorophyll based only on observed florescence, never recalibarated
+chlorophyll based only on observed fluorescence, never recalibrated
 based on laboratory samples.
 
 We also had a few “U&lt;” flags in the Turbidity data. We separated out
@@ -181,7 +174,7 @@ here.
 # Review of Sonde Data
 
 Judging only by site codes, there may be some data overlap with the FOCB
-“profile” site downcast data. We have not s double checked that yet.
+“profile” site downcast data. We have not double checked that yet.
 
 ## How often was each site sampled?
 
@@ -334,22 +327,26 @@ nested <- smaller_data %>%
 
 ``` r
  nested <- nested %>%
-  mutate(tmp2017 = map(data, function(d) ptdots( d[d$year == 2017,], .x  = dates, 
+  mutate(tmp2017 = map(data, function(d) ptdots( d[d$year == 2017,], 
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = temp) + 
                         ggtitle(site) +
                         theme_cbep(base_size = 10)),
-         tmp2018 = map(data, function(d) ptdots( d[d$year == 2018,], .x  = dates, 
+         tmp2018 = map(data, function(d) ptdots( d[d$year == 2018,], 
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = temp) + 
                         ggtitle(site) +
                         theme_cbep(base_size = 10)),
-         tmp2019 = map(data, function(d) ptdots( d[d$year == 2019,], .x  = dates, 
+         tmp2019 = map(data, function(d) ptdots( d[d$year == 2019,], 
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = temp) + 
                         ggtitle(site) +
                         theme_cbep(base_size = 10)),
-         tmp2020 = map(data, function(d) ptdots( d[d$year == 2020,], .x  = dates, 
+         tmp2020 = map(data, function(d) ptdots( d[d$year == 2020,], 
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = temp) + 
                         ggtitle(site) +
@@ -430,22 +427,26 @@ patterns.
 
 ``` r
  nested <- nested %>%
-  mutate(sal2017 = map(data, function(d) ptdots( d[d$year == 2017,], .x  = dates, 
+  mutate(sal2017 = map(data, function(d) ptdots( d[d$year == 2017,], 
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = salinity) + 
                         ggtitle(site) +
                         theme_cbep(base_size = 10)),
-         sal2018 = map(data, function(d) ptdots( d[d$year == 2018,], .x  = dates, 
+         sal2018 = map(data, function(d) ptdots( d[d$year == 2018,],
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = salinity) + 
                         ggtitle(site) +
                         theme_cbep(base_size = 10)),
-         sal2019 = map(data, function(d) ptdots( d[d$year == 2019,], .x  = dates, 
+         sal2019 = map(data, function(d) ptdots( d[d$year == 2019,], 
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = salinity) + 
                         ggtitle(site) +
                         theme_cbep(base_size = 10)),
-         sal2020 = map(data, function(d) ptdots( d[d$year == 2020,], .x  = dates, 
+         sal2020 = map(data, function(d) ptdots( d[d$year == 2020,], 
+                                                 .x  = dates, 
                                                  .y   = depth, 
                                                  .val = salinity) + 
                         ggtitle(site) +
@@ -507,6 +508,7 @@ for (s in seq_along(nested$site))
 ```
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-19-9.png" style="display: block; margin: auto;" />
+
 No real surprise. At all sites we see a tendency towards lower
 salinities in the spring and at shallower depths. But those differences
 are usually fairly small – just a few PPT.
@@ -742,7 +744,7 @@ for (s in seq_along(nested$site))
 
 #### 2019
 
-Data is limited…
+Data is limited.
 
 ``` r
 for (s in seq_along(nested$site))
@@ -770,7 +772,7 @@ for (s in seq_along(nested$site))
 
 <img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-2.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-3.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-4.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-5.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-6.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-7.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-8.png" style="display: block; margin: auto;" /><img src="DEP_Sonde_Analysis_files/figure-gfm/unnamed-chunk-34-9.png" style="display: block; margin: auto;" />
 
-A common pattern is a chlorophyll maximum down a couple of meters…
+A common pattern is a chlorophyll maximum down a couple of meters.
 
 ### Turbidity
 
@@ -828,7 +830,7 @@ for (s in seq_along(nested$site))
 
 #### 2019
 
-Data is limited…
+Data is limited.
 
 ``` r
 for (s in seq_along(nested$site))

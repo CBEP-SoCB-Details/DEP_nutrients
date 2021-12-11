@@ -56,10 +56,11 @@ library(readxl)
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -78,14 +79,16 @@ library(GGally)
 #>   method from   
 #>   +.gg   ggplot2
 library(mgcv)
+#> Warning: package 'mgcv' was built under R version 4.0.5
 #> Loading required package: nlme
 #> 
 #> Attaching package: 'nlme'
 #> The following object is masked from 'package:dplyr':
 #> 
 #>     collapse
-#> This is mgcv 1.8-36. For overview type 'help("mgcv-package")'.
+#> This is mgcv 1.8-38. For overview type 'help("mgcv-package")'.
 library(emmeans)
+#> Warning: package 'emmeans' was built under R version 4.0.5
 #> 
 #> Attaching package: 'emmeans'
 #> The following object is masked from 'package:GGally':
@@ -279,15 +282,14 @@ surface_data <- surface_data %>%
 ``` r
 site_names <- read_csv(file.path(sibling, 'GIS', 'dep_locations.csv')) %>%
   select(site, short_name)
-#> 
+#> Rows: 44 Columns: 5
 #> -- Column specification --------------------------------------------------------
-#> cols(
-#>   site_name = col_character(),
-#>   short_name = col_character(),
-#>   site = col_character(),
-#>   Latitude = col_double(),
-#>   Longitude = col_double()
-#> )
+#> Delimiter: ","
+#> chr (3): site_name, short_name, site
+#> dbl (2): Latitude, Longitude
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 surface_data <- surface_data %>%
   left_join(site_names, by = 'site') %>%
   relocate(short_name, .after = site)
@@ -484,7 +486,7 @@ royal_data <- surface_data %>%
 
 ## Antoine Creek Data Subset from 2015
 
-Antoine Creek only has NOx data, but we retain it anyway….
+Antoine Creek only has NOx data, but we retain it anyway.
 
 ``` r
 antoine_sites <- levels(factor(surface_data$site))

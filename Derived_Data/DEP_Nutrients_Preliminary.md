@@ -13,6 +13,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
         -   [Sample Type](#sample-type)
     -   [Sites and Sampled By](#sites-and-sampled-by)
     -   [Locations and Site Coding](#locations-and-site-coding)
+    -   [Depth Units](#depth-units)
 -   [Resolving Data With Qualifiers](#resolving-data-with-qualifiers)
     -   [Easy columns](#easy-columns)
     -   [Other Columns](#other-columns)
@@ -44,10 +45,11 @@ library(readxl)
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -429,7 +431,7 @@ The “RR00\_A” samples are apparently a time series of nutrient values
 from 2017. Only a single other sample is reported from RROO, from
 September of 2015.
 
-\#\#Depth Units
+## Depth Units
 
 ``` r
 unique(dep_data$`Depth Unit`)
@@ -556,7 +558,7 @@ Turbidity includes both E codes and U codes.
 
 #### “E” codes
 
-The E codes are signals for powers of ten, and wil lbe interpreted
+The E codes are signals for powers of ten, and will be interpreted
 correctly by `as.numeric()`, so we need not worry about them.
 
 ``` r

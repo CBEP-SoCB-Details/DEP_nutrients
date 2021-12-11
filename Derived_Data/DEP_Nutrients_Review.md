@@ -39,10 +39,11 @@ species, and examine the spatial and temporal distribution of data.
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -159,7 +160,7 @@ We are interested in figuring out what data occurs with other data. A
 giant `xtab()` is possible, but unwieldy for more than three variables.
 
 We instead reducing all VARIABLES to the value 1 if data exists, and
-zero otherwise. We then looking at correlations between data categories
+zero otherwise. We then look at correlations between data categories.
 
 ``` r
 tmp <- dep_data %>%
@@ -200,12 +201,12 @@ tmp <- dep_data %>%
 #>   (5,20]  26   0   0    9
 ```
 
-So overall, it looks like the depth designations ar ALMOST consistent.
-There are nine samples that lack a depth designation that were collected
-at depth. These are likely to be bottom samples, as all have depth
-reported as over 10 meters. We treat them as such here, and give them
-the depth designation of “bot” (lowercase) so we remember that the
-designation has been added, and was not part of the original data.
+So overall, it looks like the depth designations are *almost*
+consistent. There are nine samples that lack a depth designation that
+were collected at depth. These are likely to be bottom samples, as all
+have depth reported as over 10 meters. We treat them as such here, and
+give them the depth designation of “bot” (lowercase) so we remember that
+the designation has been added, and was not part of the original data.
 
 ``` r
 dep_data %>%
@@ -419,7 +420,7 @@ mostly be censored observations, but we can’t be sure here.
 #### DIN and Organic N
 
 We can calculate DIN as the sum of ammonium and nitrate, and organic N
-as the difference between DIN and TN
+as the difference between DIN and TN.
 
 ``` r
 surface_data <- surface_data %>%
@@ -549,6 +550,7 @@ ggplot(surface_data, aes(tn)) +
 ```
 
 <img src="DEP_Nutrients_Review_files/figure-gfm/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+
 So, in these data, the difference between eelgrass-oriented standards at
 about 0.35 mg/l versus dissolved oxygen standards at about 0.6 mg/l is
 huge.
@@ -565,7 +567,8 @@ ggplot(surface_data, aes(tp)) +
 ```
 
 <img src="DEP_Nutrients_Review_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
-So very little of the data is censored….
+
+So very little of the data is censored.
 
 ## N to P ratios
 
@@ -761,7 +764,7 @@ tmp %>%
 <img src="DEP_Nutrients_Review_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 Interestingly, The strongest correlation between chlorophyll and
-nutrients is with TP, not TN…. Phaeophytin is correlated with Total N
-and organic N as well. Total suspended solids is correlated with most
+nutrients is with TP, not TN. Phaeophytin is correlated with Total N and
+organic N as well. Total suspended solids is correlated with most
 metrics, suggesting it is functioning here a surrogate for plankton
 abundance, which will be correlated with everything.

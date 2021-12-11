@@ -19,7 +19,6 @@ knitr::opts_chunk$set(fig.align = 'center',
                       collapse = TRUE, comment = "#>")
 ```
 
-
 # Introduction
 This R Notebook focuses on continued review of contents of the DEP nutrient 
 data.  We focus here on data on concentration of nitrogen species, and examine 
@@ -125,7 +124,7 @@ We are interested in figuring out what data occurs with other data.  A giant
 `xtab()` is possible, but unwieldy for more than three variables.
 
 We instead reducing all VARIABLES to the value 1 if data exists, and zero
-otherwise.  We then looking at correlations between data categories
+otherwise.  We then look at correlations between data categories.
 
 ```{r}
 tmp <- dep_data %>%
@@ -148,7 +147,7 @@ tmp <- dep_data %>%
  xtabs(~ dclass + depth_designation, data = tmp, addNA = TRUE)
 ```
 
-So overall, it looks like the depth designations ar ALMOST consistent.
+So overall, it looks like the depth designations are *almost* consistent.
 There are nine samples that lack a depth designation that were collected 
 at depth.  These are likely to be bottom samples, as all have depth reported as 
 over 10 meters.  We treat them as such here, and give them the depth designation 
@@ -182,16 +181,19 @@ surface_data <- dep_data %>%
 
 
 There are a few sky-high NH4 values.  Let see where they occurred.
+
 ```{r}
 surface_data %>%
   filter(nh4_n > 2.5)
 ```
+
 All have identical values of NH$  = 4, and all are flagged as being outside of 
 normal hold times, and all had flags indicating they are censored as "<4" these
 are probably best handled as missing data, so we delete the nh4-n data.
 
 We have a few more NH4 values at `nh4_n == 0.4`, which are 
 clearly also oddballs.
+
 ```{r}
 surface_data %>%
   filter(nh4_n < 2.5, nh4_n > 0.3)
@@ -199,7 +201,6 @@ surface_data %>%
 
 Again, all have identical values of 0.4, all are flagged as censored, and 
 all are flagged as being outside of hold times.
-
 
 ### Correct Misleading NH4 values
 ```{r}
@@ -230,7 +231,8 @@ censored observations, but we can't be sure here.
 
 #### DIN and Organic N
 We can calculate DIN as the sum of ammonium and nitrate, and organic N as the 
-difference between DIN and TN
+difference between DIN and TN.
+
 ```{r}
 surface_data <- surface_data %>%
   mutate(din = nh4_n + nox_n,
@@ -312,6 +314,7 @@ from 07/21/2016. Other "low" ON sites are not related in any obvious way.
 ###### Produce PDF
 We have slightly more control of size when we specify the graphics 
 device, as we can specify fonts and base font size.
+
 ```{r ternary_pdf, fig.width = 3.5, fig.height = 3.5}
 cairo_pdf('ternary.pdf', width = 3.5, height = 5,
           family = 'Montserrat', pointsize = 8)
@@ -333,6 +336,7 @@ dev.off()
 ##### Histograms / Distributions
 Data is distributed fairly close to log-normal, although it is slightly
 heavy tailed and more skewed.
+
 ```{r fig.width = 7, fig.height = 5}
 ggplot(surface_data, aes(tn)) + 
   geom_histogram(aes(fill = site)) +
@@ -340,6 +344,7 @@ ggplot(surface_data, aes(tn)) +
   geom_vline(xintercept = 0.35, col = 'grey35') +
     geom_vline(xintercept = 0.6, col = 'grey35')
 ```
+
 So, in these data, the difference between eelgrass-oriented standards at about
 0.35 mg/l versus dissolved oxygen standards at about 0.6 mg/l is huge.
 
@@ -350,7 +355,8 @@ ggplot(surface_data, aes(tp)) +
   scale_color_manual(values = c('black', 'yellow')) + 
   scale_x_log10()
 ```
-So very little of the data is censored....
+
+So very little of the data is censored.
 
 ## N to P ratios
 ```{r}
@@ -371,6 +377,7 @@ Is that worth reporting on?  There may be N:P ratio variation between sites.
 ## Chlorophyll and Phaeophytin
 This data does not include all chlorophyll data, because of ambiguities of 
 labeling in the source data.See "DEP_Nutrients_Preparation.Rmd" for details.
+
 ```{r}
 tmp <- surface_data %>%
   select(site, sample_date, chl, phaeo)
@@ -410,7 +417,6 @@ tmp <- surface_data %>%
   select(site, sample_date, chl, phaeo, op_p, tp, tn, din, on, tss)
 ```
 
-
 ```{r fig.width = 7, fig.height = 7}
 tmp %>%
   select(-site, -sample_date
@@ -420,7 +426,7 @@ tmp %>%
 ```
 
 Interestingly, The strongest correlation between chlorophyll and nutrients is with 
-TP, not TN....   Phaeophytin is correlated with Total N and organic N as well.
+TP, not TN.   Phaeophytin is correlated with Total N and organic N as well.
 Total suspended solids is  correlated with most metrics, suggesting it is 
 functioning here a surrogate for plankton abundance, which will be 
 correlated with everything.

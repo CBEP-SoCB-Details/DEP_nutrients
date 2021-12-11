@@ -23,14 +23,14 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 \#Load libraries
 
 ``` r
-#library(readxl)
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -43,7 +43,6 @@ library(GGally)
 #> Registered S3 method overwritten by 'GGally':
 #>   method from   
 #>   +.gg   ggplot2
-#library(mgcv)
 
 library(CBEPgraphics)
 load_cbep_fonts()
@@ -97,14 +96,17 @@ the data to avoid confusion.
 ## Censoring Flags
 
 While preparing our working data, we separated raw observations from
-text annotations, including data quality flags. IN the sonde-related
+text annotations, including data quality flags. In the sonde-related
 data, we only had to contend with (1) left censoring of turbidity data ,
 and (2) data quality flags on all chlorophyll data.
 
 Since all sonde-related chlorophyll data was flagged as of questionable
 accuracy (with “J” flags), it does us no good to track that information
 during further analysis. We retain all data, but recognize that it’s
-accuracy is suspect, especially in comparison to laboratory results.
+accuracy is suspect, especially in comparison to laboratory results. We
+believe the “J” flags reflect the fact that these are “raw” estimates of
+chlorophyll based only on observed florescence, never recalibrated based
+on laboratory samples.
 
 We also had a few “U&lt;” flags in the Turbidity data. We separated out
 a `TRUE` / `FALSE` flag to indicated censored values, with the name
@@ -237,6 +239,7 @@ ggpairs(log(tmp), progress = FALSE)
 ```
 
 <img src="DEP_Sonde_Review_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+
 Many of the low turbidity values are at NTU = 0.001, but they are not
 flagged as censored observations. We suspect but can not document that
 these are minimum possible values on the sensor, and thus may be
@@ -380,10 +383,10 @@ xtabs(~ dpth_clss + site, data = tmp)
 rm(tmp)
 ```
 
-Do, most sonde data appears to be downcast data, with data collected at
-(or near) specific depths. It looks like there has been inconsistency of
+Most sonde data appears to be downcast data, with data collected at (or
+near) specific depths. It looks like there has been inconsistency of
 handling shallow water samples. Some sites shallow samples may have been
-used to estomate Kd
+used to estimate K<sub>d</sub>.
 
 ## How often was each site sampled?
 
@@ -413,8 +416,8 @@ frequently. Most of those are FOCB “profile” Sites, so it is likely
 there is some data overlap with the FOCB downcast data.
 
 We can emphasize data from selected sites, which may clarify what is
-going on. WE chose first to process data from sites withat least 29
-sampling dates. lets look at site “FR)9”
+going on. WeE chose first to process data from sites with at least 29
+sampling dates. lets look at site “FR09”
 
 ``` r
 sonde_data %>%

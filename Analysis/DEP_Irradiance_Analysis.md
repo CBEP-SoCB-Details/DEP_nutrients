@@ -34,6 +34,8 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
         -   [Hierarchical Model](#hierarchical-model)
         -   [Results](#results)
 -   [Save Results](#save-results)
+-   [Consider Robust Linear Models
+    Instead?](#consider-robust-linear-models-instead)
 -   [Export Results for GIS](#export-results-for-gis)
 -   [Draft Graphics](#draft-graphics)
     -   [Point Chart Based on Observed
@@ -49,7 +51,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 
 # Introduction
 
-THis notebook focuses on analysis of spatial and tempora lpatterns in
+This notebook focuses on analysis of spatial and temporal patterns in
 light attenuation coefficients (k) calculated from Maine DEP irradiance
 data Calculation of Light Attenuation Coefficients (k values), and
 analysis of spatial and temporal patterns in light attenuation based on
@@ -58,6 +60,7 @@ Maine DEP irradiance data.
 # Review of Theory
 
 Light attenuation is often measured as
+
 *I*<sub>*d*</sub> = *I*<sub>0</sub>*e*<sup> − *k**z*</sup>
 Where *z* is depth.
 
@@ -98,10 +101,11 @@ a linear model.
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -115,19 +119,21 @@ library(GGally)
 #>   method from   
 #>   +.gg   ggplot2
 library(emmeans)
+#> Warning: package 'emmeans' was built under R version 4.0.5
 #> 
 #> Attaching package: 'emmeans'
 #> The following object is masked from 'package:GGally':
 #> 
 #>     pigs
 library(mgcv)
+#> Warning: package 'mgcv' was built under R version 4.0.5
 #> Loading required package: nlme
 #> 
 #> Attaching package: 'nlme'
 #> The following object is masked from 'package:dplyr':
 #> 
 #>     collapse
-#> This is mgcv 1.8-36. For overview type 'help("mgcv-package")'.
+#> This is mgcv 1.8-38. For overview type 'help("mgcv-package")'.
 
 library(CBEPgraphics)
 load_cbep_fonts()
@@ -158,20 +164,15 @@ we only load the results.
 ``` r
 k_data <- read_csv(file.path(sibling, 'light_extinction_data.csv')) %>%
   mutate(yearf = factor(year))
-#> 
+#> Rows: 292 Columns: 10
 #> -- Column specification --------------------------------------------------------
-#> cols(
-#>   site_name = col_character(),
-#>   site = col_character(),
-#>   sample_date = col_date(format = ""),
-#>   year = col_double(),
-#>   month = col_character(),
-#>   doy = col_double(),
-#>   start_hour = col_double(),
-#>   k_est = col_double(),
-#>   k_se = col_double(),
-#>   k_n = col_double()
-#> )
+#> Delimiter: ","
+#> chr  (3): site_name, site, month
+#> dbl  (6): year, doy, start_hour, k_est, k_se, k_n
+#> date (1): sample_date
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 # Reorder Site Factor by Mean k Values
@@ -254,7 +255,7 @@ ggplot(k_data, aes(k_est, k_se, color = k_n)) +
 <img src="DEP_Irradiance_Analysis_files/figure-gfm/error_scales_with_estimate-1.png" style="display: block; margin: auto;" />
 There is a strong location-scale relationship. We have tighter estimates
 of k from sites and dates with low k conditions, while precision is much
-lower for sites with high k. THis presumably reflects either
+lower for sites with high k. This presumably reflects either
 non-linearities in light extinction, or just higher variance in light
 measurements at lower light (higher k).
 
@@ -273,7 +274,7 @@ There is a fair amount of scatter between estimated standard error at
 each K value. The standard errors are usually about an order of
 magnitude to an order of magnitude and a half smaller that the
 estimates, so we are talking about differences on the order of a factor
-of 1 to 50 times smaller than the estimates. We may be able to get away
+of 10 to 50 times smaller than the estimates. We may be able to get away
 with ignoring this in our analysis, but we should be aware that the
 problem exists. If we ignore this variation in precision we will
 over-represent low-precision high values in any regression.
@@ -288,7 +289,7 @@ essential here.
 ## Means and SE of k by Site
 
 These are “raw” estimates and do not account for the uncertainty of
-individual estimates of K, as reflected in the standard errors (`k)se`)
+individual estimates of K, as reflected in the standard errors (`k_se`)
 in the data.
 
 ``` r
@@ -457,10 +458,9 @@ but data is to limited at most sites to draw any conclusions (analysis
 not shown).
 
 In unweighted models, there is evidence for year to year variation.
-There is  
-a pattern with improving light penetration over the course of the year
-at some sites. Because of uneven sampling, the sequential sums of
-squares are dependent on the sequence in which terms are entered into
+There is a pattern with improving light penetration over the course of
+the year at some sites. Because of uneven sampling, the sequential sums
+of squares are dependent on the sequence in which terms are entered into
 the models, but all terms are important.
 
 ``` r
@@ -475,8 +475,8 @@ par(oldpar)
 ```
 
 Model diagnostics are not great, although they are slightly better when
-based only on the sites with substantial data. But both teh all sites
-and preferred sites models show strong location-scale patterns.
+based only on the sites with substantial data. But all sites and
+preferred sites models show strong location-scale patterns.
 
 ### Weighted Models
 
@@ -579,7 +579,7 @@ plot(lim_wlm)
 par(oldpar)
 ```
 
-Model diagnostics are perhaps slightly better, but stil lnot great.
+Model diagnostics are perhaps slightly better, but still not great.
 Residuals tend to be larger (as expected).
 
 #### Reduced Weighted Models
@@ -763,11 +763,10 @@ interaction does not qualitatively change our understanding.
 
 Unfortunately, for most sites (not shown in this restricted data set),
 we have data from too few dates for seasonal relationships to be taken
-too seriously. A few sites show apparent seasonal trends, based on just
-a handful of dates from one year. While those sites influence model
-selection, the reality is, the trends can’t be taken too seriously. We
-probably need to leave those sites out of any analysis that looks at
-seasonal patterns.
+seriously. A few sites show apparent seasonal trends, based on just a
+handful of dates from one year. While those sites influence model
+selection, the reality is, the trends can’t be trusted. We need to leave
+those sites out of any analysis that looks at seasonal patterns.
 
 This model left out nonlinearities in response to day of year response
 at PRV70, hiding a seasonal pattern there.
@@ -791,8 +790,10 @@ plot(emms_small) +
 ```
 
 <img src="DEP_Irradiance_Analysis_files/figure-gfm/plot_emm_small-1.png" style="display: block; margin: auto;" />
-There is no apparent difference for qualitative meaning. We can look
-more closely at the model comparisons.
+
+There is no apparent difference in the qualitative meaning we might draw
+from these two models. We can look more closely by formally comparing
+model predictions and “marginal means”.
 
 ### Compare Marginal and Observed Means
 
@@ -848,6 +849,7 @@ ggplot(results, aes(k_mn, em_mn)) +
 ```
 
 <img src="DEP_Irradiance_Analysis_files/figure-gfm/compare_weighted-1.png" style="display: block; margin: auto;" />
+
 Weighted models downweights the higher k sites, which had higher
 uncertainty in the source regressions. The weighted regression does not
 match the observed means as closely as the unweighted regression at the
@@ -907,6 +909,7 @@ ggplot(results, aes(w_est, small_est)) +
 ```
 
 <img src="DEP_Irradiance_Analysis_files/figure-gfm/compare_small_large-1.png" style="display: block; margin: auto;" />
+
 Very little difference.
 
 #### Weighted to Unweighted Models
@@ -933,21 +936,25 @@ ggplot(results, aes(w_est, uw_est)) +
 ```
 
 <img src="DEP_Irradiance_Analysis_files/figure-gfm/compare_weighted_unweighted-1.png" style="display: block; margin: auto;" />
-The weighted model alters estimates slightly, (leading to slightly lower
+
+The weighted model alters estimates slightly, (Leading to slightly lower
 estimates of means) but it makes no real difference to qualitative
 conclusions.
 
 So For the sites where have substantial data:  
 1. The “adjusted” marginal means (of several log models) are very close
-to the raw means. 2. Rank order of sites is basically unchanged under
-any of the models. 3. Errors from the models are smaller than the
-standard error of the means. 4. The weighted regression brings model
-produces estimates close to observed means for medium and small values,
-but does not do as well at large values. 5. Models with and without a
-Day of the Year term generate similar qualitative results. 5. We have a
-remaining location-scale relationship, which makes these models somewhat
-suspect for estimating standard errors. There is little we can do with a
-conventioanl linear model to address that.
+to the raw means.  
+2. Rank order of sites is basically unchanged under any of the models.  
+3. Errors from the models are smaller than the standard error of the
+means.  
+4. The weighted regression model produces estimates close to observed
+means for medium and small values, but does not do as well at large
+values.  
+5. Models with and without a Day of the Year term generate similar
+qualitative results.  
+5. We have a remaining location-scale relationship, which makes these
+models somewhat suspect for estimating standard errors. There is little
+we can do with a conventional linear model to address that.
 
 ### Hierarchical Model
 
@@ -1058,7 +1065,8 @@ dreadful.
 
 Note that the hierarchical model allows us to estimate means and
 standard errors for all sites, even those with data from only a single
-year.
+year. Those estimates should be viewed with skepticism, but they are
+better than no estmates at all.
 
 #### Compare Hierarchical Model To Weighted Linear Model
 
@@ -1084,6 +1092,7 @@ ggplot(results, aes(lm_est, hm_est)) +
 ```
 
 <img src="DEP_Irradiance_Analysis_files/figure-gfm/compare_hm_to wm-1.png" style="display: block; margin: auto;" />
+
 The hierarchical model produces predictions very similar to a
 non-hierarchical model. (In other analysis, we identified that including
 a DOY term strongly biases estimates of marginal means at CR-44, where
@@ -1107,6 +1116,11 @@ results <- as_tibble(emms_hm) %>%
   relocate(site, site_name, k_mean, k_se, k_observs, light_observs)
 ```
 
+# Consider Robust Linear Models Instead?
+
+The function `rlm()` fro, `MASS` may handle the location-scale problems
+better.
+
 # Export Results for GIS
 
 ``` r
@@ -1120,7 +1134,7 @@ relatively low impact on predictions. The primary value of these models
 will be in estimating standard errors in ways that allow us to lean on
 data from sites with more data to help constrain variability at sites
 where we lack data. The best way to look at that will be through very
-simple hierarchical models, that treat year as a random variable.
+simple hierarchical models that treat year as a random variable.
 
 ## Point Chart Based on Observed Means
 

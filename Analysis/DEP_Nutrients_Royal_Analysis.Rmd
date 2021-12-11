@@ -25,8 +25,7 @@ concentrations, especially total nitrogen at sites along the Royal and Cousins
 estuaries.
 
 The focus is on documenting
-differences among sites sampled by Maine DEP, most of which are found
-close to Portland, Maine.
+differences among sites sampled by Maine DEP.
 
 #Load Libraries
 ```{r libraries}
@@ -94,7 +93,6 @@ surface_data <- dep_data %>%
   relocate(yearf, doy, .after = year)
 ```
 
-
 There are a few sky-high NH4 values, at nominal concentrations of 0.4 or 4.0 
 mg.l NH4-N.  All are flagged as "censored" (despite high values) and 
 carry annotations of excessive hold times.  We delete them.
@@ -117,6 +115,7 @@ surface_data <- surface_data %>%
 ### Add DIN and Organic N
 We calculate DIN as the sum of ammonium and nitrate, and organic N as the 
 difference between DIN and TN.
+
 ```{r add_din_and_on}
 surface_data <- surface_data %>%
   mutate(din = nh4_n + nox_n,
@@ -168,7 +167,7 @@ an underscore and "flag".
 
 We also had a few "U",  "U<" and ">" flags.  These represent censored values,
 either right censored ( ">") for Secchi depth, or left censored for other 
-parameters.  Again, we separated out a `TRUE` / `FALSE` flag to indicated 
+parameters.  Again, we separated out a `TRUE` / `FALSE` flag to indicate 
 censored values.  These flags also follow a consistent naming convention, with 
 the variable name followed by an underscore and "cens".
 
@@ -242,12 +241,13 @@ legend('topleft', ncol = 2,
 So, we see that most samples on the Royal have low ammonium, with variable
 levels of NOx versus organic N.  The sites with the highest proportion
 of NOx tend to be from the upper tributaries / head of tide. High TN samples
-may be slightly more likely to have extreme proportions, but hey do not fall
+may be slightly more likely to have extreme proportions, but they do not fall
 in any particular area of the plot.
 
 ## Produce PDF
 We have slightly more control of size of fonts when we specify the graphics 
 device, as we can specify fonts and base font size.
+
 ```{r ternary_pdf, fig.width = 3.5, fig.height = 3.5}
 cairo_pdf('figures/ternary_royal.pdf', width = 3.5, height = 5,
           family = 'Montserrat', pointsize = 8)
@@ -327,13 +327,12 @@ ggplot(royal_data_2017, aes(din, short_name)) +
   ylab('') +
   xlab('Dissolved Inorganic Nitrogen (mg/l)') +
   
-  theme_cbep(base_size = 12)  +
+  theme_cbep(base_size = 12)
   #theme(legend.position = 'None' )  +
   #scale_x_log10()
   
 ggsave('figures/din_by_site_royal.pdf', device = cairo_pdf, width = 6, height = 4)
 ```
-
 
 ## Linear Models
 ```{r din_lm_1}
@@ -359,6 +358,7 @@ plot(royal_din_emms_lm) + coord_flip() +
   geom_point(data = royal_results, aes(y = site, x = din_gm),
              color = 'yellow')
 ```
+
 Differences between model predictions and observed means are entirely
 because the model is predicting geometric, not arithmetic means.
 
@@ -368,6 +368,7 @@ oldpar <- par(mfrow = c(2,2))
 plot(royal_din_lm)
 par(oldpar)
 ```
+
 The log transform here was a bit too strong, but the diagnostics are not 
 dreadful, and they are better than diagnostics on untransformed data.  However,
 we know the variances are probably not uniform across sites, so we should 
@@ -379,6 +380,7 @@ skepticism.
 royal_din_gam <- gam(log(din) ~ site + s(doy, k = 5), data = royal_data_2017)
 anova(royal_din_gam)
 ```
+
 So the GAM term is not statistically meaningful with such small samples, but it
 does appear to better address model specification, generating a nicer
 distribution of residuals.  Still, there is little value to continuing down 
@@ -404,7 +406,8 @@ plt <- ggplot(royal_data_2017, aes(tn)) +
 plt + facet_wrap(~site)
 ```
 
-The tributaries appear to have the highest TN values....
+The tributaries appear to have the highest TN values.
+
 ## Draft Graphic
 ```{r tn_graphic, fig.height = 4, fig.width = 5}
 ggplot(royal_data_2017, aes(tn, short_name)) +
@@ -442,10 +445,10 @@ summary(royal_tn_lm)
 ```
 
 So the month of July had higher than expected TN, and that is unlikely to be
-solely do to chance (if we view each Site as independent, which in this setting, 
-we do not).  We have too little data to conclude that there is a meaningful
-seasonal pattern. All we know is "July is high" which may reflect the year's 
-peculiar weather or something.  We proceed with a simpler model here.
+solely due to chance (if we view each Site as independent, which in this
+setting, we do not).  We have too little data to conclude that there is a
+meaningful seasonal pattern. All we know is "July is high" which may reflect the
+year's peculiar weather or something.  We proceed with a simpler model here.
 
 ```{r tn_lm_3}
 royal_tn_lm_red <- lm(log(tn) ~ site, data = royal_data_2017)
@@ -465,6 +468,7 @@ plot(royal_tn_emms_lm) + coord_flip() +
   geom_point(data = royal_results, aes(y = site, x = tn_gm),
              color = 'yellow')
 ```
+
 The linear model does an excellent job of returning the observed geometric 
 means, as expected.
 
@@ -474,7 +478,8 @@ oldpar <- par(mfrow = c(2,2))
 plot(royal_tn_lm_red)
 par(oldpar)
 ```
-Those look excellent, except for he possible scale-location pattern.  However, 
+
+Those look excellent, except for the possible scale-location pattern.  However, 
 since that pattern reflects discrete site predictions, it likely only reflects 
 low variability at one site -- for unknown reasons.
 
@@ -566,7 +571,7 @@ ggplot(royal_data_2017, aes(tp)) +
   scale_color_manual(values = c('black', 'yellow')) + 
   scale_x_log10()
 ```
-So very little of the data is censored....
+So very little of the data is censored.
 
 ```{r tp_plot_1}
 ggplot(royal_data_2017, aes(site, tp)) + 
@@ -578,7 +583,6 @@ ggplot(royal_data_2017, aes(site, tp)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.25, hjust = 1))
 ```
 
-
 ```{r tp_plot_2}
 ggplot(royal_data_2017, aes(doy, tp)) + 
   geom_point(aes(color = site)) +
@@ -586,6 +590,7 @@ ggplot(royal_data_2017, aes(doy, tp)) +
   scale_color_viridis_d() +
   scale_y_log10()
 ```
+
 There is a  possibility of a seasonal pattern here.
 
 # Chlorophyll and Phaeophytin
@@ -602,7 +607,7 @@ tmp %>%
   ggpairs(progress = FALSE)
 ```
 
-Generally, Chl and Phaeo are correlated here....
+Generally, Chl and Phaeo are correlated.
 
 ```{r chl_graphic}
 tmp <- royal_data_2017 %>%
@@ -632,5 +637,5 @@ tmp %>%
   ggpairs(progress = FALSE)
 ```
 
-Interestingly, The strongest correlation between chlorophyll and nutrients is
-with TP, not TN....
+The strongest correlation between chlorophyll and nutrients is
+with TP, not TN.

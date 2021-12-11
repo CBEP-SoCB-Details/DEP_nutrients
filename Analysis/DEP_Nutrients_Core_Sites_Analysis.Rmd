@@ -21,7 +21,7 @@ knitr::opts_chunk$set(fig.align = 'center',
 
 # Introduction
 This R Notebook focuses on analysis of patterns in nutrients concentrations, 
-especially total nitrogen, froma small number of "core" locations sampled
+especially total nitrogen, from a small number of "core" locations sampled
 by Maine DEP regularly in 2018, 2019, and 2020.  These sites are all found
 close to Portland, Maine.
 
@@ -97,7 +97,6 @@ surface_data <- dep_data %>%
   relocate(yearf, doy, .after = year)
 ```
 
-
 There are a few sky-high NH4 values, at nominal concentrations of 0.4 or 4.0 
 mg.l NH4-N.  All are flagged as "censored" (despite high values) and 
 carry annotations of excessive hold times.  We delete them.
@@ -128,7 +127,6 @@ surface_data <- surface_data %>%
          on       = tn - din,
          on_flag  = din_flag | tn_flag,
          on_cens_r  = din_flag)    #since this is calculated by difference
-
 ```
 
 # Data Subsets
@@ -178,7 +176,7 @@ an underscore and "flag".
 
 We also had a few "U",  "U<" and ">" flags.  These represent censored values,
 either right censored ( ">") for Secchi depth, or left censored for other 
-parameters.  Again, we separated out a `TRUE` / `FALSE` flag to indicated 
+parameters.  Again, we separated out a `TRUE` / `FALSE` flag to indicate
 censored values.  These flags also follow a consistent naming convention, with 
 the variable name followed by an underscore and "cens".
 
@@ -207,7 +205,6 @@ tp        | Total Phosphorus as P         | MG/L                 |
 tss       | Total Suspended Solids        | MG/L                 |
 secchi    | Secchi Depth                  | M                    |
 
-
 # Nitrogen
 ## Pairs Plot
 ```{r n_pairs}
@@ -217,7 +214,6 @@ tmp <- core_data %>%
 
 ggpairs(log(tmp), progress = FALSE)
 ```
-
 
 ### Ternary Diagrams
 ```{r calc_proportions}
@@ -350,6 +346,7 @@ xtabs(~ year + site, data = core_data, subset = ! is.na(din))%>%
 ### Histograms / Distributions
 Data is distributed fairly close to log-normal, although it is slightly
 heavy tailed and more skewed.
+
 ```{r din_hist}
 plt <- ggplot(core_data, aes(din)) + 
   geom_histogram(aes(fill = site)) +
@@ -410,6 +407,7 @@ anova(core_din_lm_red)
 emmip(core_din_lm, site ~ yearf,
       type = 'response')
 ```
+
 ```{r din_lm_interaction_2}
 emmip(core_din_lm, month ~ yearf,
       type = 'response')
@@ -433,6 +431,7 @@ plot(core_din_emms_lm) + coord_flip() +
   geom_point(data = core_results, aes(y = site, x = din_gm),
              color = 'yellow')
 ```
+
 Differences between model predictions and observed means are almost entirely
 because the model is predicting geometric, not arithmetic means. The model's
 adjusted geometric means line up well with observed geometric means.
@@ -462,6 +461,7 @@ oldpar <- par(mfrow = c(2,2))
 plot(core_din_lm_red)
 par(oldpar)
 ```
+
 The log transform here was a bit too strong, but the diagnostics are not 
 dreadful.
 
@@ -539,6 +539,7 @@ ggplot(compare, aes(din_mn, response)) +
 ### Histograms / Distributions
 Data is distributed fairly close to log-normal, although it is slightly
 heavy tailed and more skewed.
+
 ```{r}
 plt <- ggplot(core_data, aes(tn)) + 
   geom_histogram(aes(fill = site)) +
@@ -589,6 +590,7 @@ core_tn_lm <- step(core_tn_lm_full)
 anova(core_tn_lm)
 
 ```
+
 ```{r tn_lm_3}
 core_tn_lm_red <- lm(log(tn) ~ site + month + yearf, data = core_data)
 anova(core_tn_lm_red)
@@ -616,6 +618,7 @@ plot(core_tn_emms_lm) + coord_flip() +
   geom_point(data = core_results, aes(y = site, x = tn_gm),
              color = 'yellow')
 ```
+
 The linear model does an excellent job of returning the observed geometric 
 means.
 
@@ -635,6 +638,7 @@ ggplot(compare, aes(tn_mn, response)) +
   ylab('Log Linear Model') +
   coord_equal()
 ```
+
 So, this model fits values slightly below observed values, as expected for
 geometric means of skewed data, which are slightly lower than arithmetic means.
 
@@ -644,6 +648,7 @@ oldpar <- par(mfrow = c(2,2))
 plot(core_tn_lm_red)
 par(oldpar)
 ```
+
 Those look excellent.
 
 ### GAM Model
@@ -706,12 +711,14 @@ ggplot(compare, aes(tn_mn, response)) +
   ylab('Log Linear Model') +
   coord_equal()
 ```
+
 Here the lower values from the GAM model are because we are implicitly comparing 
 estimated geometric means to arithmetic means.
 
 # N to P Ratios
 Generally, our N:P ratios are well below 15, suggesting continued N limitation.
 Is that worth reporting on?  There may be N:P ratio variation between sites.
+
 ### Histograms / Distributions
 ```{r n2p_histogram}
 core_data <- core_data %>%
@@ -770,8 +777,9 @@ ggsave('figures/n_to_p_by_site.pdf', device = cairo_pdf, width = 6, height = 4)
 It's clear there is a seasonal pattern in N to P ratios.
 
 ### GAM Model
-We are not fitting a year random effect here , because we have data from only 
+We are not fitting a year random effect here, because we have data from only 
 two years, and no reason to expect N:P ratios the vary systematically by year.
+
 ```{r n2p_gam}
 core_n2p_gam <- gam(log(n_to_p) ~ site + s(doy, k = 4), data = core_data)
 anova(core_n2p_gam)
@@ -809,6 +817,7 @@ plot(core_n2p_emms_gam) + coord_flip() +
   geom_point(data = core_n2p_results, aes(y = site, x = n_to_p_gm),
              color = 'yellow')
 ```
+
 The sites show statistically significant differences as a group, but with
 those large error bands, most pairwise comparisons will not be significant.
 
@@ -817,6 +826,7 @@ plot(core_n2p_emms_gam_doy) + coord_flip() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.25))
   
 ```
+
 On the other hand, the is a strong N to p ratio pattern.  Since there is only a 
 little seasonal pattern in the N values, the P values must climb seasonally.
 
@@ -827,6 +837,7 @@ ggplot(core_data, aes(tp)) +
   scale_color_manual(values = c('black', 'yellow')) + 
   scale_x_log10()
 ```
+
 So very little of the data is censored....
 
 ```{r tp_plot}
@@ -891,5 +902,3 @@ with TP, not TN....   Phaeophytin is correlated with Total N and organic N as
 well. Total suspended solids is  correlated with most metrics, suggesting it is
 functioning here as a surrogate for plankton abundance, which will be correlated
 with everything.
-
-

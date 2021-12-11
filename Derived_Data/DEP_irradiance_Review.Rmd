@@ -21,7 +21,8 @@ knitr::opts_chunk$set(fig.align = 'center',
 
 # Introduction
 In this notebook, we review  Maine DEP irradiance data and calculate light
-attenuation coefficients (k values.)  We export a data set consisting of K estimates, sample sizes, and estimated standard errors of those estimates.
+attenuation coefficients (k values.)  We export a data set consisting of K
+estimates, sample sizes, and estimated standard errors of those estimates.
 
 # Review of theory
 Light attenuation is often measured as 
@@ -39,10 +40,9 @@ $$
 log(\frac{I_d}{I_0}) = -kz
 $$
 
-
-Note that this produces a value of k at each depth  If we assume theory is
+Note that this produces a value of k at each depth. If we assume this theory is
 accurate and light attenuation is vertically uniform, we can average across 
-depths. to improve accuracy. 
+depths to improve accuracy. 
 
 $$ k = \frac{1}{-z} \times log(\frac{I_d}{I_0}) $$
 
@@ -58,7 +58,6 @@ log(Id) = -kz
 
 So, K can be estimated as the negative of linear coefficient of depth in a 
 linear model.
-
 
 #Load libraries
 ```{r libraries}
@@ -82,7 +81,7 @@ irr_data <- read_csv(file.path('dep_irradiance_data.csv')) %>%
 
 # Summary of Metadata
 ## QA/QC Samples
-We conducted no analysis of QA/QC samples, and simply deleted then from the data
+We conducted no analysis of QA/QC samples, and simply deleted them from the data
 to avoid confusion.
 
 ## Censoring Flags
@@ -117,7 +116,6 @@ depth     | Sample Depth	               | Meters                |
 irr_air   | Irradiance (air)              | µmol/m2/s            |
 irr_water | Irradiance (surface water)    | µmol/m2/s            |
 irr_pct_  | Irradiance (% of air in surface water) | %           |
-
 
 # Review of Irradiance Data
 ## Scatterplot Matrix (Pairs Plot)
@@ -202,7 +200,6 @@ ggplot(aes(depth, irr_pct, color = factor(sample_date))) +
   #guides(color = guide_colorbar(title.position="top", barheight = .5)) +
   facet_wrap("site")
 ```
-
 
 # Calculation of Light Extinction Coefficients
 We develop an estimates of K  for each unique depth profile, using linear

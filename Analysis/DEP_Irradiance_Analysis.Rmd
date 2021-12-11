@@ -26,7 +26,8 @@ Calculation of Light Attenuation Coefficients (k values), and analysis of spatia
 temporal patterns in light attenuation based on Maine DEP irradiance data.
 
 # Review of Theory
-Light attenuation is often measured as 
+Light attenuation is often measured as
+
 $$
 I_d = I_0 e^{-kz}
 $$
@@ -51,9 +52,9 @@ If we recast values as proportions of surface light intensity, I~0 is 1, by
 definition, so we can estimate k~d as
 
 $$ k \approx k_d \approx - \frac{log(I_d)}{z}$$
-So, if we are comfortable with the assumption of well mixed surface waters, we can 
-recast estimation of k as a linear regression problem, and aggregate data across
-multiple depths.
+So, if we are comfortable with the assumption of well mixed surface waters, we
+can recast estimation of k as a linear regression problem, and aggregate data
+across multiple depths.
 
 Y = mx + b
 
@@ -89,8 +90,10 @@ sibling <- paste(parent,sibfldnm, sep = '/')
 # Load Data
 We estimated light extinction coefficients based on DEP irradiance data,
 as the slope of linear regressions on log-transformed light intensity data.
-Standard errors are the standard errors of the slope estimates from those regressions. Details are available in the "DEP_Irradiance_Review.Rmd" file in 
+Standard errors are the standard errors of the slope estimates from those
+regressions. Details are available in the "DEP_Irradiance_Review.Rmd" file in
 the "Derived_Data" folder.  Here we only load the results.
+
 ```{r load_data}
 k_data <- read_csv(file.path(sibling, 'light_extinction_data.csv')) %>%
   mutate(yearf = factor(year))
@@ -135,6 +138,7 @@ K_n           | Number of observations used to estimate k. |        |
 # Data Review
 ## Identify Regularly Sampled Sites
 We make an assumption here that sampling on one day is all related.
+
 ```{r high_data_sites}
 tmp <- k_data %>%
   group_by(site, sample_date) %>%
@@ -149,7 +153,6 @@ Note how few times most sites were sampled.  This makes seasonal patterns,
 in particular, unstable, and so there is a trade off between analysis of all
 sites and the complexity of models the data can support.
 
-
 ## Location-Scale Relationships
 ```{r error_scales_with_estimate}
 ggplot(k_data, aes(k_est, k_se, color = k_n)) +
@@ -157,11 +160,12 @@ ggplot(k_data, aes(k_est, k_se, color = k_n)) +
 ```
 There is a strong location-scale relationship.  We have tighter estimates of k
 from sites and dates with low k conditions, while precision is much lower for
-sites with high k.  THis presumably reflects either non-linearities in light
+sites with high k.  This presumably reflects either non-linearities in light
 extinction, or just higher variance in light measurements at lower light (higher
 k).
 
-The pattern is even clearer after log-log transform. (This is principally for display purposes.  The log of the standard error is not the standard error of 
+The pattern is even clearer after log-log transform. (This is principally for 
+display purposes.  The log of the standard error is not the standard error of 
 the logs).
 
 ```{r log_error_by_log_estimate}
@@ -172,7 +176,7 @@ ggplot(k_data, aes(log10(k_est), log10(k_se), color = k_n)) +
 There is a fair amount of scatter between estimated standard error at each
 K value.  The standard errors are usually about an order of magnitude to an 
 order of magnitude and a half smaller that the estimates, so we are talking
-about differences on the order of a factor of 1 to 50 times smaller than the
+about differences on the order of a factor of 10 to 50 times smaller than the
 estimates.  We may be able to get away with ignoring this in our analysis,
 but we should be aware that the problem exists.  If we ignore this variation in
 precision we will over-represent low-precision high values in any regression.
@@ -185,7 +189,7 @@ k if we analyze log-transformed data, which appears essential here.
 
 ## Means and SE of k by Site
 These are "raw" estimates and do not account for the uncertainty of individual
-estimates of K, as reflected in the standard errors  (`k)se`) in the data.
+estimates of K, as reflected in the standard errors  (`k_se`) in the data.
 
 ```{r mean_k-by_site}
 k_means <- k_data %>%
@@ -246,9 +250,11 @@ data.
 
 ## Linear Models
 ### Unweighted Models
-A log transform helps with model diagnostics, although it does not
-completely eliminate skewness in the residuals or a marked location-scale relationship.  We extract predicted values from this regression by back transforming from the log transform, thus making these location predictions 
-akin to geometric means.
+A log transform helps with model diagnostics, although it does not completely
+eliminate skewness in the residuals or a marked location-scale relationship.  We
+extract predicted values from this regression by back transforming from the log
+transform, thus making these location predictions akin to geometric means.
+
 ```{r linear_model}
 lim_lm <- lm(log(k_est) ~ factor(year) +  doy + site + site:doy, data = k_data,
              subset = site %in% preferred_sites)
@@ -262,20 +268,26 @@ anova(lim_lm)
 summary(lim_lm)
 ```
 
-Overall, day of year is not a significant predictor of K, but it is a 
+Overall, day of year is not a significant predictor of K, but it is a
 significant predictor at several Presumpscot River sites. (Analysis of all sites
-suggests that may be true of some other riverine sites too, but data is to limited at most sites to draw any conclusions (analysis not shown).
+suggests that may be true of some other riverine sites too, but data is to
+limited at most sites to draw any conclusions (analysis not shown).
 
-In unweighted models, there is evidence for year to year variation.  There is   
-a pattern with improving light penetration over the course of the year at some sites.  Because of uneven sampling, the sequential sums of squares are dependent
-on the sequence in which terms are entered into the models, but all terms are important.
+In unweighted models, there is evidence for year to year variation.  There is a
+pattern with improving light penetration over the course of the year at some
+sites.  Because of uneven sampling, the sequential sums of squares are dependent
+on the sequence in which terms are entered into the models, but all terms are
+important.
 
 ```{r diagnostics_lm}
 oldpar <- par(mfrow = c(2,2))
 plot(lim_lm)
 par(oldpar)
 ```
-Model diagnostics are not great, although they are slightly better when based only on the sites with substantial data.  But both teh all sites and preferred sites models show strong location-scale patterns.
+
+Model diagnostics are not great, although they are slightly better when based
+only on the sites with substantial data.  But all sites and preferred
+sites models show strong location-scale patterns.
 
 ### Weighted Models
 In a conventional weighted linear model, we would weight observations by the 
@@ -291,6 +303,7 @@ produce a weighted regression that performs better than using no weighting at
 all.  An alternative would be to formally model the location-scale relationship,
 but I believe this makes better use of our knowledge of model uncertainty that
 underlies our estimates of k.
+
 ```{r weighted_models}
 full_wlm <- lm(log(k_est) ~ factor(year) +  doy + site + site:doy, 
               weights = 1/(log(k_se)^2), data = k_data)
@@ -315,7 +328,9 @@ oldpar <- par(mfrow = c(2,2))
 plot(lim_wlm)
 par(oldpar)
 ```
-Model diagnostics are perhaps slightly better, but stil lnot great.  Residuals tend to be larger (as expected). 
+
+Model diagnostics are perhaps slightly better, but still not great.  Residuals 
+tend to be larger (as expected). 
 
 #### Reduced Weighted Models
 We explore a model that omits the Day of Year. While day of the year is
@@ -335,13 +350,15 @@ small_wlm_all <- lm(log(k_est) ~ factor(year) +  site ,
 anova(small_wlm)
 summary(small_wlm)
 ```
+
 ```{r diagnostics_small_lm}
 oldpar <- par(mfrow = c(2,2))
 plot(small_wlm)
 par(oldpar)
 ```
 
-Model diagnostics are not great here either, although there are no points with high leverage, the scale-location relationship is still strong.
+Model diagnostics are not great here either, although there are no points with 
+high leverage, the scale-location relationship is still strong.
 
 ### "Adjusted" Means by Site
 ```{r calc_marginal_means}
@@ -377,17 +394,21 @@ emtrends(lim_wlm, ~site, var = 'doy', type = 'predict',
   arrange(doy.trend)
 ```
 
-Remember that sites are ordered by mean k value, so values are highest at the Presumpscot stations, and lowest at the Fore River station.
+Remember that sites are ordered by mean k value, so values are highest at the 
+Presumpscot stations, and lowest at the Fore River station.
 
 The Presumpscot River stations see improvements in light penetration over the
-course of the spring and summer. They are among our sites with the highest k values, and remain so regardless of time of year.  (Rank order of sites changes little over the course of the year.) The interaction does not qualitatively
-change our understanding.  
+course of the spring and summer. They are among our sites with the highest k
+values, and remain so regardless of time of year.  (Rank order of sites changes
+little over the course of the year.) The interaction does not qualitatively
+change our understanding.
 
 Unfortunately, for most sites (not shown in this restricted data set), we have
-data from too few dates for seasonal relationships to be taken too seriously.  A few sites show apparent seasonal trends, based on just a handful of dates from
-one year. While those sites influence model selection, the reality is, the 
-trends can't be taken too seriously.  We probably need to leave those sites out
-of any analysis that  looks at seasonal patterns.
+data from too few dates for seasonal relationships to be taken seriously.  A
+few sites show apparent seasonal trends, based on just a handful of dates from
+one year. While those sites influence model selection, the reality is, the
+trends can't be trusted.  We need to leave those sites out
+of any analysis that looks at seasonal patterns.
 
 This model left out nonlinearities in response to day of year response at PRV70,
 hiding a seasonal pattern there.
@@ -407,8 +428,10 @@ plot(emms_small) +
   ylab('') +
   coord_flip()
 ```
-There is no apparent difference for qualitative meaning. We can look more 
-closely at the model comparisons.
+
+There is no apparent difference in the qualitative meaning we might draw from
+these two models.  We can look more closely by formally comparing model
+predictions and "marginal means".
 
 ### Compare Marginal and Observed Means
 #### Unweighted to Observed
@@ -457,8 +480,11 @@ ggplot(results, aes(k_mn, em_mn)) +
   ggtitle('Weighted Regression') +
   theme_cbep(base_size = 12)
 ```
-Weighted models downweights the higher k sites, which had higher uncertainty 
-in the source regressions. The weighted regression does not match the observed means as closely as the unweighted regression at the higher end.  That is expected, and a direct -- and not unreasonable -- consequence of weighting.
+
+Weighted models downweights the higher k sites, which had higher uncertainty in
+the source regressions. The weighted regression does not match the observed
+means as closely as the unweighted regression at the higher end.  That is
+expected, and a direct -- and not unreasonable -- consequence of weighting.
 
 #### Small Model to Observed
 ```{r compare_small}
@@ -506,6 +532,7 @@ ggplot(results, aes(w_est, small_est)) +
   ggtitle('Compare With and Without DOY') +
   theme_cbep(base_size = 12)
 ```
+
 Very little difference.
 
 #### Weighted to Unweighted Models
@@ -529,22 +556,24 @@ ggplot(results, aes(w_est, uw_est)) +
   ggtitle('Compare Weighted to Unweighted') +
   theme_cbep(base_size = 12)
 ```
-The weighted model alters estimates slightly, (leading to slightly lower
+
+The weighted model alters estimates slightly, (Leading to slightly lower
 estimates of means) but it makes no real difference to qualitative conclusions.
 
 
 So  For the sites where have substantial data:  
 1.  The "adjusted" marginal means (of several log models) are very close to the 
-    raw means.
-2.  Rank order of sites is basically unchanged under any of the models.
+    raw means.  
+2.  Rank order of sites is basically unchanged under any of the models.  
 3.  Errors from the models are smaller than the standard error of the 
-    means.
-4.  The weighted regression brings model produces estimates close to observed
-    means for medium and small values, but does not do as well at large values.
-5.  Models with and without a Day of the Year term generate similar qualitative      results.
+    means.  
+4.  The weighted regression model produces estimates close to observed
+    means for medium and small values, but does not do as well at large values.  
+5.  Models with and without a Day of the Year term generate similar qualitative
+    results.  
 5.  We have a remaining location-scale relationship, which makes these models
     somewhat suspect for estimating standard errors. There is little we can do
-    with a conventioanl linear model to address that.
+    with a conventional linear model to address that.  
 
 ### Hierarchical Model
 We would like to map sites by k value using GIS. We want to compare all sites
@@ -555,12 +584,16 @@ other sites to estimate long-term "typical" condition for sites that were
 sampled rarely, while correcting for any bias introduced by having data from
 only some years.
 
-We chose to omit consideration of seasonal pattern, largely because the data is too sparse at most sites to evaluate a full seasonal model  We are leaving out
+We chose to omit consideration of seasonal pattern, largely because the data is 
+too sparse at most sites to evaluate a full seasonal model  We are leaving out
 a known source of variation by doing so, but the previous analysis showed
-that the effect is small compared do differences between sites, which is our focus here.
+that the effect is small compared do differences between sites, which is our 
+focus here.
 
 We rely on the `mgcv` package.  It provides a convenient approach to
-simple hierarchical modeling, by specifying a hierarchical model via a "random effects" smoother, via `s(x, bs = 're')`.
+simple hierarchical modeling, by specifying a hierarchical model via a 
+"random effects" smoother, via `s(x, bs = 're')`.
+
 ```{r hierarchical_model}
 the_hmod <- gam(log(k_est) ~ site +  s(yearf, bs = 're'),
                  data = k_data,
@@ -587,7 +620,8 @@ remaining scale-location relationship.  But the diagnostics are not dreadful.
 ```
 
 Note that the hierarchical model allows us to estimate means and standard errors 
-for all sites, even those with data from only a single year.
+for all sites, even those with data from only a single year.  Those estimates
+should be viewed with skepticism, but they are better than no estmates at all.
 
 #### Compare Hierarchical Model To Weighted Linear Model
 ```{r compare_hm_to wm}
@@ -610,10 +644,15 @@ ggplot(results, aes(lm_est, hm_est)) +
   ggtitle('Compare Hierarchical Model') +
   theme_cbep(base_size = 12)
 ```
-The hierarchical model produces predictions very similar to a non-hierarchical model. (In other analysis, we identified that including a DOY term strongly biases estimates of marginal means at CR-44, where three K values suggest a very steep and implausible seasonal trend. Graphic not shown.)
+
+The hierarchical model produces predictions very similar to a non-hierarchical
+model. (In other analysis, we identified that including a DOY term strongly
+biases estimates of marginal means at CR-44, where three K values suggest a very
+steep and implausible seasonal trend. Graphic not shown.)
 
 # Save Results
-We conclude that the Hierarchical (and weighted) model provides the best summary of the data for mapping purposes.  We assemble a data frame with the observed
+We conclude that the Hierarchical (and weighted) model provides the best summary 
+of the data for mapping purposes.  We assemble a data frame with the observed
 means and standard errors, and estimated marginal means and standard errors from
 the hierarchical model.
 ```{r assemble_results}
@@ -627,7 +666,7 @@ results <- as_tibble(emms_hm) %>%
 ```
 
 # Consider Robust Linear Models Instead?
-The function `rlm()` fro, `MASS` may handle the location-scale problems better...
+The function `rlm()` fro, `MASS` may handle the location-scale problems better.
 
 # Export Results for GIS
 ```{r save_results}
@@ -639,7 +678,7 @@ With the analysis in hand, we can see that different models have relatively low
 impact on predictions.  The primary value of these models will be in estimating
 standard errors in ways that allow us to lean on data from sites with more data
 to help constrain variability at sites where we lack data. The best way to look
-at that will be through very simple hierarchical models, that treat year as a
+at that will be through very simple hierarchical models that treat year as a
 random variable.
  
 ## Point Chart Based on Observed Means
@@ -689,7 +728,3 @@ results %>%
   
   theme(axis.text.x = element_text(angle = 90, vjust = 0.25))
 ```
-
-
-
-

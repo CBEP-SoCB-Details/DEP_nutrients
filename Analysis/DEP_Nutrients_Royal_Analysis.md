@@ -32,6 +32,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
     -   [GAM Model](#gam-model)
 -   [TN Analysis](#tn-analysis)
     -   [Histograms](#histograms)
+    -   [Draft Graphic](#draft-graphic-1)
     -   [Linear Models](#linear-models-1)
         -   [Marginal Means](#marginal-means-1)
         -   [Model Diagnostics](#model-diagnostics-1)
@@ -39,7 +40,7 @@ Curtis C. Bohlen, Casco Bay Estuary Partnership.
 -   [N to P ratios](#n-to-p-ratios)
     -   [Histograms / Distributions](#histograms--distributions-1)
     -   [Descriptive Statistics](#descriptive-statistics-1)
-    -   [Draft Graphic](#draft-graphic-1)
+    -   [Draft Graphic](#draft-graphic-2)
 -   [Phosphorus (A Few Graphics)](#phosphorus-a-few-graphics)
 -   [Chlorophyll and Phaeophytin](#chlorophyll-and-phaeophytin)
     -   [Chlorophyll and Nutrients](#chlorophyll-and-nutrients)
@@ -55,7 +56,7 @@ concentrations, especially total nitrogen at sites along the Royal and
 Cousins estuaries.
 
 The focus is on documenting differences among sites sampled by Maine
-DEP, most of which are found close to Portland, Maine.
+DEP.
 
 \#Load Libraries
 
@@ -64,10 +65,11 @@ DEP, most of which are found close to Portland, Maine.
 library(tidyverse)
 #> Warning: package 'tidyverse' was built under R version 4.0.5
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.6     v dplyr   1.0.7
+#> v tidyr   1.1.4     v stringr 1.4.0
+#> v readr   2.1.0     v forcats 0.5.1
+#> Warning: package 'ggplot2' was built under R version 4.0.5
 #> Warning: package 'tidyr' was built under R version 4.0.5
 #> Warning: package 'dplyr' was built under R version 4.0.5
 #> Warning: package 'forcats' was built under R version 4.0.5
@@ -86,14 +88,16 @@ library(GGally)
 #>   method from   
 #>   +.gg   ggplot2
 library(mgcv)
+#> Warning: package 'mgcv' was built under R version 4.0.5
 #> Loading required package: nlme
 #> 
 #> Attaching package: 'nlme'
 #> The following object is masked from 'package:dplyr':
 #> 
 #>     collapse
-#> This is mgcv 1.8-36. For overview type 'help("mgcv-package")'.
+#> This is mgcv 1.8-38. For overview type 'help("mgcv-package")'.
 library(emmeans)
+#> Warning: package 'emmeans' was built under R version 4.0.5
 #> 
 #> Attaching package: 'emmeans'
 #> The following object is masked from 'package:GGally':
@@ -175,15 +179,14 @@ surface_data <- surface_data %>%
 ``` r
 site_names <- read_csv(file.path(sibling, "GIS", 'dep_locations.csv')) %>%
   select(site, short_name)
-#> 
+#> Rows: 44 Columns: 5
 #> -- Column specification --------------------------------------------------------
-#> cols(
-#>   site_name = col_character(),
-#>   short_name = col_character(),
-#>   site = col_character(),
-#>   Latitude = col_double(),
-#>   Longitude = col_double()
-#> )
+#> Delimiter: ","
+#> chr (3): site_name, short_name, site
+#> dbl (2): Latitude, Longitude
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 surface_data <- surface_data %>%
   left_join(site_names, by = 'site') %>%
   relocate(short_name, .after = site)
@@ -263,7 +266,7 @@ naming convention, with the variable name followed by an underscore and
 We also had a few “U”, “U&lt;” and “&gt;” flags. These represent
 censored values, either right censored ( “&gt;”) for Secchi depth, or
 left censored for other parameters. Again, we separated out a `TRUE` /
-`FALSE` flag to indicated censored values. These flags also follow a
+`FALSE` flag to indicate censored values. These flags also follow a
 consistent naming convention, with the variable name followed by an
 underscore and “cens”.
 
@@ -437,7 +440,7 @@ So, we see that most samples on the Royal have low ammonium, with
 variable levels of NOx versus organic N. The sites with the highest
 proportion of NOx tend to be from the upper tributaries / head of tide.
 High TN samples may be slightly more likely to have extreme proportions,
-but hey do not fall in any particular area of the plot.
+but they do not fall in any particular area of the plot.
 
 ## Produce PDF
 
@@ -537,17 +540,19 @@ ggplot(royal_data_2017, aes(din, short_name)) +
   ylab('') +
   xlab('Dissolved Inorganic Nitrogen (mg/l)') +
   
-  theme_cbep(base_size = 12)  +
+  theme_cbep(base_size = 12)
+#> Warning: Removed 7 rows containing missing values (geom_point).
+```
+
+<img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/din_graphic-1.png" style="display: block; margin: auto;" />
+
+``` r
   #theme(legend.position = 'None' )  +
   #scale_x_log10()
   
 ggsave('figures/din_by_site_royal.pdf', device = cairo_pdf, width = 6, height = 4)
 #> Warning: Removed 7 rows containing missing values (geom_point).
-
-#> Warning: Removed 7 rows containing missing values (geom_point).
 ```
-
-<img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/din_graphic-1.png" style="display: block; margin: auto;" />
 
 ## Linear Models
 
@@ -608,6 +613,7 @@ plot(royal_din_emms_lm) + coord_flip() +
 ```
 
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/plot_din_lm_marginals-1.png" style="display: block; margin: auto;" />
+
 Differences between model predictions and observed means are entirely
 because the model is predicting geometric, not arithmetic means.
 
@@ -674,7 +680,7 @@ gam.check(royal_din_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>        k' edf k-index p-value
-    #> s(doy)  4   1    0.94    0.32
+    #> s(doy)  4   1    0.94    0.29
     par(oldpar)
 
 # TN Analysis
@@ -697,8 +703,9 @@ plt + facet_wrap(~site)
 
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/tn_histograms-1.png" style="display: block; margin: auto;" />
 
-The tributaries appear to have the highest TN values…. \#\# Draft
-Graphic
+The tributaries appear to have the highest TN values.
+
+## Draft Graphic
 
 ``` r
 ggplot(royal_data_2017, aes(tn, short_name)) +
@@ -799,11 +806,11 @@ summary(royal_tn_lm)
 ```
 
 So the month of July had higher than expected TN, and that is unlikely
-to be solely do to chance (if we view each Site as independent, which in
-this setting, we do not). We have too little data to conclude that there
-is a meaningful seasonal pattern. All we know is “July is high” which
-may reflect the year’s peculiar weather or something. We proceed with a
-simpler model here.
+to be solely due to chance (if we view each Site as independent, which
+in this setting, we do not). We have too little data to conclude that
+there is a meaningful seasonal pattern. All we know is “July is high”
+which may reflect the year’s peculiar weather or something. We proceed
+with a simpler model here.
 
 ``` r
 royal_tn_lm_red <- lm(log(tn) ~ site, data = royal_data_2017)
@@ -834,6 +841,7 @@ plot(royal_tn_emms_lm) + coord_flip() +
 ```
 
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/plot_tn_lm_marginals-1.png" style="display: block; margin: auto;" />
+
 The linear model does an excellent job of returning the observed
 geometric means, as expected.
 
@@ -850,7 +858,7 @@ plot(royal_tn_lm_red)
 par(oldpar)
 ```
 
-Those look excellent, except for he possible scale-location pattern.
+Those look excellent, except for the possible scale-location pattern.
 However, since that pattern reflects discrete site predictions, it
 likely only reflects low variability at one site – for unknown reasons.
 
@@ -899,7 +907,7 @@ gam.check(royal_tn_gam)
     #> indicate that k is too low, especially if edf is close to k'.
     #> 
     #>          k'  edf k-index p-value
-    #> s(doy) 3.00 1.64    0.93    0.26
+    #> s(doy) 3.00 1.64    0.93    0.23
     par(oldpar)
 
 # N to P ratios
@@ -999,7 +1007,7 @@ ggplot(royal_data_2017, aes(tp)) +
 ```
 
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/tp_histogram-1.png" style="display: block; margin: auto;" />
-So very little of the data is censored….
+So very little of the data is censored.
 
 ``` r
 ggplot(royal_data_2017, aes(site, tp)) + 
@@ -1028,6 +1036,7 @@ ggplot(royal_data_2017, aes(doy, tp)) +
 ```
 
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/tp_plot_2-1.png" style="display: block; margin: auto;" />
+
 There is a possibility of a seasonal pattern here.
 
 # Chlorophyll and Phaeophytin
@@ -1063,7 +1072,7 @@ tmp %>%
 
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/chl_pairs-1.png" style="display: block; margin: auto;" />
 
-Generally, Chl and Phaeo are correlated here….
+Generally, Chl and Phaeo are correlated.
 
 ``` r
 tmp <- royal_data_2017 %>%
@@ -1218,5 +1227,5 @@ tmp %>%
 
 <img src="DEP_Nutrients_Royal_Analysis_files/figure-gfm/chl_nutrients_pairs-1.png" style="display: block; margin: auto;" />
 
-Interestingly, The strongest correlation between chlorophyll and
-nutrients is with TP, not TN….
+The strongest correlation between chlorophyll and nutrients is with TP,
+not TN.
